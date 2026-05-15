@@ -15,31 +15,34 @@ exports.handler = async (event) => {
   const body = event.body ? JSON.parse(event.body) : {};
   const path = event.path;
 
-  // Approve payment
+  // ── VERIFY USER (validate accessToken via Pi API) ──
+  if (path.includes('/verify')) {
+    const { accessToken } = body;
+    if (!accessToken) return { statusCode: 400, headers, body: JSON.stringify({ error: 'No token' }) };
+    try {
+      const result = await piGet('/v2/me', accessToken);
+      return { statusCode: 200, headers, body: JSON.stringify({ success: true, user: result }) };
+    } catch (e) {
+      return { statusCode: 401, headers, body: JSON.stringify({ error: 'Invalid token' }) };
+    }
+  }
+
+  // ── APPROVE PAYMENT ──
   if (path.includes('/approve')) {
     const { paymentId } = body;
     try {
-      const result = await piRequest(
-        `POST`,
-        `/v2/payments/${paymentId}/approve`,
-        PI_API_KEY
-      );
+      const result = await piRequest('POST', `/v2/payments/${paymentId}/approve`, PI_API_KEY);
       return { statusCode: 200, headers, body: JSON.stringify(result) };
     } catch (e) {
       return { statusCode: 500, headers, body: JSON.stringify({ error: e.message }) };
     }
   }
 
-  // Complete payment
+  // ── COMPLETE PAYMENT ──
   if (path.includes('/complete')) {
     const { paymentId, txid } = body;
     try {
-      const result = await piRequest(
-        `POST`,
-        `/v2/payments/${paymentId}/complete`,
-        PI_API_KEY,
-        { txid }
-      );
+      const result = await piRequest('POST', `/v2/payments/${paymentId}/complete`, PI_API_KEY, { txid });
       return { statusCode: 200, headers, body: JSON.stringify(result) };
     } catch (e) {
       return { statusCode: 500, headers, body: JSON.stringify({ error: e.message }) };
@@ -49,6 +52,7 @@ exports.handler = async (event) => {
   return { statusCode: 404, headers, body: JSON.stringify({ error: 'Not found' }) };
 };
 
+// Pi API call with API Key
 function piRequest(method, path, apiKey, data) {
   return new Promise((resolve, reject) => {
     const postData = data ? JSON.stringify(data) : null;
@@ -56,22 +60,41 @@ function piRequest(method, path, apiKey, data) {
       hostname: 'api.minepi.com',
       path,
       method,
-      headers: {
-        'Authorization': `Key ${apiKey}`,
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Authorization': `Key ${apiKey}`, 'Content-Type': 'application/json' }
     };
     if (postData) options.headers['Content-Length'] = Buffer.byteLength(postData);
     const req = https.request(options, (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
-      res.on('end', () => {
-        try { resolve(JSON.parse(body)); }
-        catch (e) { resolve(body); }
-      });
+      res.on('end', () => { try { resolve(JSON.parse(body)); } catch (e) { resolve(body); } });
     });
     req.on('error', reject);
     if (postData) req.write(postData);
+    req.end();
+  });
+}
+
+// Pi API call with Bearer token (for user verification)
+function piGet(path, accessToken) {
+  return new Promise((resolve, reject) => {
+    const options = {
+      hostname: 'api.minepi.com',
+      path,
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    };
+    const req = https.request(options, (res) => {
+      let body = '';
+      res.on('data', chunk => body += chunk);
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(body);
+          if (res.statusCode === 200) resolve(parsed);
+          else reject(new Error('Invalid token'));
+        } catch (e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
     req.end();
   });
 }
