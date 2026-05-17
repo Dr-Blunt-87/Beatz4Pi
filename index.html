@@ -1,0 +1,1635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Beatz4Pi</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#C9A84C;--glt:#FFD700;
+  --bk:#0A0A0A;--dk:#111;--panel:#1A1A1A;--br:#2A2A2A;
+  --pu:#7B2FBE;--pult:#9B4FDE;
+  --tx:#E8E8E8;--mu:#666;--gr:#2ECC71;--rd:#E74C3C;
+}
+html,body{height:100%;background:var(--bk);color:var(--tx);font-family:'Rajdhani',sans-serif;}
+
+/* APP */
+#app{display:none;flex-direction:column;height:100dvh;overflow:hidden;}
+#app.on{display:flex;flex-direction:column;height:100dvh;overflow:hidden;}
+
+/* HEADER */
+header{background:var(--dk);border-bottom:2px solid var(--gold);flex-shrink:0;z-index:10;}
+.htop{display:flex;align-items:center;gap:10px;padding:8px 14px;}
+.lwrap{position:relative;width:46px;height:46px;flex-shrink:0;}
+.lspin{position:absolute;inset:-3px;border-radius:10px;background:linear-gradient(135deg,#FFE55C,#C9A84C,#8B6000,#C9A84C,#FFE55C);animation:gspin 3s linear infinite;}
+.lglow{position:absolute;inset:-1px;border-radius:9px;background:linear-gradient(135deg,#FFD700,#C9A84C);opacity:.5;filter:blur(4px);animation:gpulse 2s ease-in-out infinite;}
+.limg{position:relative;z-index:1;width:46px;height:46px;border-radius:8px;object-fit:cover;border:2px solid var(--glt);display:block;}
+.ltxt{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:3px;background:linear-gradient(135deg,#FFE55C,#C9A84C,#FFD700,#8B6000,#FFD700,#FFE55C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s ease-in-out infinite;background-size:200% auto;}
+.lsub{font-size:.56rem;color:var(--mu);letter-spacing:2px;font-family:'Space Mono',monospace;}
+.navwrap{position:relative;}
+.navwrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:28px;background:linear-gradient(to right,transparent,var(--dk));pointer-events:none;z-index:2;}
+nav{display:flex;gap:5px;padding:0 10px 8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+nav::-webkit-scrollbar{display:none;}
+.nb{flex-shrink:0;white-space:nowrap;background:none;border:1px solid var(--br);color:var(--mu);padding:6px 12px;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:1px;}
+.nb.on{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.08);}
+
+/* LAYOUT */
+.main{display:flex;flex:1;min-height:0;overflow:hidden;}
+
+/* SIDEBAR */
+.sb{width:200px;background:var(--dk);border-right:1px solid var(--br);flex-shrink:0;overflow-y:auto;}
+.sb::-webkit-scrollbar{width:3px;}.sb::-webkit-scrollbar-thumb{background:var(--br);}
+.sbs{padding:12px 12px 6px;}
+.sbl{font-size:.58rem;letter-spacing:2px;color:var(--mu);text-transform:uppercase;margin-bottom:6px;font-family:'Space Mono',monospace;}
+.sbi{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:5px;cursor:pointer;font-size:.86rem;font-weight:600;color:var(--mu);margin-bottom:1px;}
+.sbi:hover,.sbi.on{background:rgba(201,168,76,.1);color:var(--gold);}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--gr);margin-left:auto;box-shadow:0 0 5px var(--gr);}
+
+/* FEED COLUMN */
+.fcol{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+
+/* COMPOSER */
+.comp{background:var(--panel);border:1px solid var(--br);border-radius:8px;padding:12px;margin:12px;flex-shrink:0;}
+.ctop{display:flex;gap:9px;margin-bottom:9px;}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.88rem;font-weight:700;color:#fff;flex-shrink:0;border:2px solid var(--br);}
+.comp textarea{flex:1;background:var(--dk);border:1px solid var(--br);color:var(--tx);border-radius:5px;padding:8px 10px;font-family:'Rajdhani',sans-serif;font-size:.9rem;resize:none;outline:none;min-height:58px;line-height:1.5;}
+.comp textarea:focus{border-color:var(--gold);}
+.crow{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.linkin{flex:1;min-width:120px;background:var(--dk);border:1px solid var(--br);color:var(--tx);padding:7px 9px;border-radius:4px;font-family:'Space Mono',monospace;font-size:.7rem;outline:none;}
+.linkin:focus{border-color:var(--gold);}
+.psel{background:var(--dk);border:1px solid var(--br);color:var(--tx);padding:7px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.82rem;outline:none;}
+.bpost{background:var(--gold);color:var(--bk);border:none;padding:7px 16px;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:.95rem;letter-spacing:2px;cursor:pointer;}
+.bpost:active{background:var(--glt);}
+.bpost:disabled{background:var(--br);color:var(--mu);cursor:not-allowed;}
+.bnote{background:none;border:1px solid var(--br);color:var(--mu);padding:7px 11px;border-radius:4px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:.8rem;font-weight:700;}
+.bnote.on{border-color:var(--gold);color:var(--gold);}
+.notebox{display:none;margin-top:8px;}
+.notebox.on{display:flex;gap:6px;}
+.notebox textarea{flex:1;background:var(--dk);border:1px solid var(--br);color:var(--tx);border-radius:4px;padding:7px 9px;font-family:'Rajdhani',sans-serif;font-size:.88rem;resize:none;outline:none;min-height:44px;}
+.notebox textarea:focus{border-color:var(--gold);}
+.notebox button{background:var(--gold);border:none;color:var(--bk);padding:7px 12px;border-radius:4px;cursor:pointer;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:1px;align-self:flex-end;}
+#fwarn{display:none;margin-top:7px;padding:7px 10px;background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.35);border-radius:4px;font-size:.78rem;color:var(--rd);font-family:'Rajdhani',sans-serif;}
+
+/* FREE BANNER */
+#fbanner{flex-shrink:0;}
+.fbar{background:rgba(201,168,76,.06);border-bottom:1px solid rgba(201,168,76,.15);padding:6px 14px;display:flex;align-items:center;justify-content:space-between;}
+.fbar span{font-size:.72rem;color:var(--mu);font-family:'Space Mono',monospace;}
+.fbar button{background:var(--gold);border:none;color:var(--bk);padding:5px 12px;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:1px;cursor:pointer;}
+.procard{margin:10px 12px 0;background:linear-gradient(135deg,rgba(201,168,76,.1),rgba(123,47,190,.06));border:1px solid var(--gold);border-radius:8px;padding:12px;display:flex;align-items:center;gap:12px;}
+
+/* FEED */
+.feed{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:10px;transform:none;}
+.feed::-webkit-scrollbar{width:4px;}.feed::-webkit-scrollbar-thumb{background:var(--br);}
+
+/* POST CARD */
+.pc{background:var(--panel);border:1px solid var(--br);border-radius:8px;overflow:hidden;position:relative;width:100%;max-width:680px;margin:0 auto 10px;display:block;transform:none;}
+.pc:hover{border-color:rgba(201,168,76,.4);}
+.ph{display:flex;align-items:center;gap:9px;padding:10px 12px;}
+.pm{flex:1;min-width:0;}
+.pu{font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:5px;}
+.pt{font-size:.66rem;color:var(--mu);font-family:'Space Mono',monospace;}
+.pro-badge{font-size:.52rem;background:var(--gold);color:var(--bk);padding:1px 5px;border-radius:3px;font-family:'Space Mono',monospace;font-weight:700;flex-shrink:0;}
+.pb{padding:3px 7px;border-radius:3px;font-size:.6rem;font-weight:700;font-family:'Space Mono',monospace;cursor:pointer;border:none;}
+.p-yt{background:#FF0000;color:#fff;}.p-sp{background:#1DB954;color:#fff;}.p-sc{background:#FF5500;color:#fff;}.p-ig{background:#E1306C;color:#fff;}.p-fb{background:#1877F2;color:#fff;}
+.pmenu{background:none;border:none;color:var(--mu);font-size:1rem;cursor:pointer;padding:2px 6px;}
+.pdrop{position:absolute;right:9px;top:42px;z-index:50;background:var(--panel);border:1px solid var(--br);border-radius:6px;overflow:hidden;min-width:120px;box-shadow:0 6px 18px rgba(0,0,0,.5);display:none;}
+.pdrop.on{display:block;}
+.pdi{padding:9px 12px;font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;border:none;background:none;width:100%;color:var(--tx);font-family:'Rajdhani',sans-serif;text-align:left;}
+.pdi:hover{background:var(--br);}
+.pdi.d{color:var(--rd);}
+.pnote{padding:0 12px 9px;font-size:.9rem;line-height:1.55;color:var(--tx);}
+
+/* POST SQUARE */
+.psq{margin:0 12px 9px;aspect-ratio:1/1;background:linear-gradient(135deg,#0d0d0d,#1a1a1a);border-radius:6px;overflow:hidden;border:1px solid var(--br);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--mu);font-family:'Space Mono',monospace;font-size:.68rem;}
+.psq iframe{width:100%;height:100%;border:none;}
+.ecov{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;position:relative;overflow:hidden;}
+.ethumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.4;}
+.eplay{width:52px;height:52px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--bk);z-index:1;flex-shrink:0;}
+.eplay:active{transform:scale(.93);}
+.elabel{z-index:1;font-size:.66rem;color:rgba(255,255,255,.7);text-align:center;}
+.wv{display:flex;align-items:center;gap:2px;height:22px;z-index:1;}
+.wb{width:3px;background:var(--gold);border-radius:2px;animation:wave 1.2s ease-in-out infinite;opacity:.7;}
+
+/* POST LINK & ACTIONS */
+.plink{margin:0 12px 8px;padding:7px 10px;background:rgba(123,47,190,.1);border:1px solid rgba(123,47,190,.3);border-radius:4px;font-size:.7rem;color:var(--pult);font-family:'Space Mono',monospace;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.plink:hover{background:rgba(123,47,190,.2);}
+.pacts{display:flex;border-top:1px solid var(--br);}
+.pa{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;padding:9px 4px;cursor:pointer;font-size:.74rem;font-weight:700;color:var(--mu);border:none;background:none;font-family:'Rajdhani',sans-serif;}
+.pa:hover{color:var(--gold);}
+.pa:not(:last-child){border-right:1px solid var(--br);}
+.pa.liked{color:var(--rd);}
+.pa.disliked{color:var(--rd);}
+.pifl{position:fixed;font-size:.75rem;font-weight:700;color:var(--gold);font-family:'Space Mono',monospace;pointer-events:none;z-index:9999;animation:piflash .9s ease-out forwards;}
+@keyframes piflash{0%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-40px);}}
+
+/* COMMENTS */
+.cmts{border-top:1px solid var(--br);padding:9px 12px;display:none;}
+.cmts.on{display:block;}
+.cmt{display:flex;gap:6px;margin-bottom:6px;}
+.cb{background:var(--br);border-radius:4px;padding:5px 9px;flex:1;}
+.cu{font-size:.7rem;font-weight:700;color:var(--gold);}
+.ct{font-size:.76rem;line-height:1.4;}
+.cir{display:flex;gap:5px;margin-top:6px;}
+.cir input{flex:1;background:var(--dk);border:1px solid var(--br);color:var(--tx);padding:6px 8px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.86rem;outline:none;}
+.cir input:focus{border-color:var(--gold);}
+.cir button{background:var(--gold);border:none;color:var(--bk);padding:6px 10px;border-radius:4px;cursor:pointer;font-weight:700;font-family:'Rajdhani',sans-serif;}
+
+/* RIGHT PANEL */
+.rp{width:230px;background:var(--dk);border-left:1px solid var(--br);flex-shrink:0;overflow-y:auto;}
+.rp::-webkit-scrollbar{width:3px;}.rp::-webkit-scrollbar-thumb{background:var(--br);}
+.rpt{padding:12px 13px;font-family:'Bebas Neue',sans-serif;font-size:.92rem;letter-spacing:2px;color:var(--gold);border-bottom:1px solid var(--br);}
+.tri{padding:9px 12px;border-bottom:1px solid var(--br);cursor:pointer;display:flex;gap:8px;align-items:center;}
+.tri:hover{background:rgba(201,168,76,.05);}
+.trn{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--br);width:16px;}
+.ti{flex:1;min-width:0;}
+.tn{font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ta{font-size:.64rem;color:var(--mu);font-family:'Space Mono',monospace;}
+.tpi{color:var(--gold);font-size:.7rem;font-weight:700;font-family:'Space Mono',monospace;}
+
+/* PROFILE */
+#pview{display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;flex-direction:column;min-height:0;flex:1;}
+#pview.on{display:flex;}
+.pfhd{background:var(--panel);border-bottom:1px solid var(--br);padding:18px 16px 0;flex-shrink:0;}
+.pftp{display:flex;gap:15px;align-items:flex-start;margin-bottom:14px;}
+.pfav{width:72px;height:72px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;color:#fff;border:3px solid var(--glt);flex-shrink:0;background:linear-gradient(135deg,var(--pu),var(--gold));}
+.pfnm{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;letter-spacing:2px;background:linear-gradient(135deg,#FFE55C,#C9A84C,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.pfro{font-size:.65rem;color:var(--mu);font-family:'Space Mono',monospace;margin-bottom:9px;}
+.pfst{display:flex;gap:16px;}
+.pfs{text-align:center;}
+.pfsn{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold);}
+.pfsl{font-size:.6rem;color:var(--mu);letter-spacing:1px;}
+.pftabs{display:flex;border-top:1px solid var(--br);margin:0 -16px;}
+.pftab{flex:1;padding:9px;font-weight:700;font-size:.76rem;letter-spacing:1px;background:none;border:none;border-top:2px solid transparent;cursor:pointer;font-family:'Rajdhani',sans-serif;color:var(--mu);}
+.pftab.on{color:var(--gold);border-top-color:var(--gold);}
+.pfgrid{padding:9px;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;}
+.gc{aspect-ratio:1;position:relative;overflow:hidden;background:var(--panel);border-radius:4px;cursor:pointer;}
+.gcb{width:100%;height:100%;background:linear-gradient(135deg,#1a1a1a,#0d0d0d);display:flex;align-items:center;justify-content:center;font-size:1.6rem;}
+.gov{position:absolute;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;gap:8px;opacity:0;font-size:.72rem;font-weight:700;}
+.gc:hover .gov,.gc:active .gov{opacity:1;}
+.gdel{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.7);border:none;border-radius:3px;font-size:.8rem;padding:2px 5px;cursor:pointer;color:#fff;}
+.pflist{padding:11px;display:flex;flex-direction:column;gap:9px;}
+.pfempty{text-align:center;padding:40px 16px;color:var(--mu);}
+
+/* MODALS */
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto;}
+.mbg.on{display:flex;}
+.mbox{background:var(--dk);border:1px solid var(--gold);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;width:min(460px,100%);max-height:92vh;margin:auto;}
+.mhd{padding:12px 15px;background:var(--panel);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.mtitle{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--gold);flex:1;}
+.mclose{background:none;border:none;color:var(--mu);cursor:pointer;font-size:1.2rem;padding:4px 8px;}
+.mclose:hover{color:var(--rd);}
+
+/* CHAT */
+.cmsgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:160px;}
+.bbl{max-width:78%;padding:7px 10px;border-radius:8px;font-size:.84rem;line-height:1.5;}
+.bbl.in{background:var(--panel);border-bottom-left-radius:2px;align-self:flex-start;}
+.bbl.out{background:var(--pu);border-bottom-right-radius:2px;align-self:flex-end;}
+.bfile{display:flex;align-items:center;gap:4px;padding:4px 6px;background:rgba(0,0,0,.3);border-radius:3px;font-family:'Space Mono',monospace;font-size:.62rem;margin-top:3px;}
+.btm{font-size:.6rem;color:var(--mu);margin-top:2px;font-family:'Space Mono',monospace;}
+.btm.r{text-align:right;}
+.cft{border-top:1px solid var(--br);padding:9px 11px;flex-shrink:0;}
+.cir2{display:flex;gap:5px;margin-bottom:7px;}
+.cir2 input{flex:1;background:var(--bk);border:1px solid var(--br);color:var(--tx);padding:7px 10px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.86rem;outline:none;}
+.cir2 input:focus{border-color:var(--gold);}
+.cats{display:flex;gap:5px;}
+.cbtn{padding:7px 10px;border-radius:4px;font-size:.76rem;font-weight:700;cursor:pointer;border:none;font-family:'Rajdhani',sans-serif;}
+.cbtn.send{background:var(--gold);color:var(--bk);flex:1;}
+.cbtn.file{background:var(--br);color:var(--tx);}
+.cbtn.rec{background:var(--rd);color:#fff;}
+.cbtn.rec.on{animation:pred 1s infinite;}
+.fnote{font-size:.6rem;color:var(--mu);font-family:'Space Mono',monospace;text-align:center;margin-top:5px;}
+
+/* MEMBERS */
+.msrch{padding:9px 13px;border-bottom:1px solid var(--br);display:flex;gap:6px;flex-shrink:0;}
+.msrch input{flex:1;background:var(--bk);border:1px solid var(--br);color:var(--tx);padding:7px 10px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.88rem;outline:none;}
+.msrch input:focus{border-color:var(--gold);}
+.msrch button{background:var(--gold);border:none;color:var(--bk);padding:7px 13px;border-radius:4px;font-family:'Bebas Neue',sans-serif;letter-spacing:1px;cursor:pointer;}
+.mcats{display:flex;border-bottom:1px solid var(--br);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.mcats::-webkit-scrollbar{display:none;}
+.mcat{padding:8px 14px;font-weight:700;font-size:.75rem;letter-spacing:1px;color:var(--mu);cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;white-space:nowrap;font-family:'Rajdhani',sans-serif;}
+.mcat.on{color:var(--gold);border-bottom-color:var(--gold);}
+.mlist{padding:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto;flex:1;}
+.mcard{background:var(--panel);border:1px solid var(--br);border-radius:7px;padding:10px;display:flex;gap:8px;position:relative;}
+.mcard:hover{border-color:var(--gold);}
+.mav{width:42px;height:42px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;border:2px solid var(--br);}
+.min2{flex:1;min-width:0;}
+.mnm{font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mrl{font-size:.65rem;color:var(--gold);font-family:'Space Mono',monospace;margin-bottom:2px;}
+.mbi{font-size:.7rem;color:var(--mu);line-height:1.4;}
+.macts{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap;}
+.mbtn{padding:4px 8px;border-radius:3px;font-size:.68rem;font-weight:700;cursor:pointer;border:none;font-family:'Rajdhani',sans-serif;}
+.mbf{background:var(--pu);color:#fff;}.mbf.on{background:var(--br);color:var(--mu);}
+.mbm{background:var(--br);color:var(--tx);}.mbm:hover{background:var(--gold);color:var(--bk);}
+.mbdg{position:absolute;top:6px;right:6px;padding:2px 6px;border-radius:3px;font-size:.57rem;font-weight:700;letter-spacing:1px;font-family:'Space Mono',monospace;}
+.addf{padding:11px 13px;border-top:1px solid var(--br);flex-shrink:0;}
+.addf h4{font-family:'Bebas Neue',sans-serif;letter-spacing:2px;color:var(--gold);font-size:.88rem;margin-bottom:8px;}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ag input,.ag select,.ag textarea{background:var(--bk);border:1px solid var(--br);color:var(--tx);padding:6px 9px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.82rem;outline:none;}
+.ag input:focus,.ag select:focus,.ag textarea:focus{border-color:var(--gold);}
+.ag textarea{resize:none;grid-column:1/-1;}
+.badd{margin-top:6px;width:100%;background:var(--gold);border:none;color:var(--bk);padding:8px;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;cursor:pointer;}
+
+/* TERMS */
+.ttabs{display:flex;border-bottom:1px solid var(--br);flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.ttabs::-webkit-scrollbar{display:none;}
+.ttab{flex-shrink:0;padding:9px 14px;cursor:pointer;font-weight:700;font-size:.74rem;letter-spacing:1px;color:var(--mu);border:none;background:none;border-bottom:2px solid transparent;font-family:'Rajdhani',sans-serif;}
+.ttab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.tbody{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;flex:1;}
+.tbody h3{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:1px;color:var(--gold);margin:13px 0 4px;}
+.tbody p,.tbody li{font-size:.8rem;color:var(--tx);line-height:1.7;}
+.tbody ul{padding-left:15px;}
+
+/* SUBSCRIPTION */
+.plan{flex:1;background:var(--panel);border:1px solid var(--br);border-radius:8px;padding:14px;}
+.plan.pro{border-color:var(--gold);border-width:2px;position:relative;}
+.plan-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bk);padding:2px 12px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:.75rem;letter-spacing:2px;white-space:nowrap;}
+.plan-name{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;margin-bottom:4px;}
+.plan-price{font-family:'Bebas Neue',sans-serif;font-size:2rem;margin-bottom:10px;}
+.plan-feat{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;font-size:.78rem;color:var(--tx);}
+.plan-feat span{color:var(--br);}
+
+/* NOTIF */
+#notif{position:fixed;bottom:18px;right:18px;z-index:9999;background:var(--panel);border:1px solid var(--gold);padding:9px 14px;border-radius:6px;font-size:.8rem;font-weight:700;color:var(--gold);max-width:240px;pointer-events:none;opacity:0;transform:translateY(50px);transition:all .3s;}
+#notif.on{opacity:1;transform:translateY(0);}
+
+/* LOGIN */
+#login{position:fixed;inset:0;background:var(--bk);z-index:9000;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:flex-start;justify-content:center;padding:20px 16px;}
+.lbox{width:100%;max-width:400px;background:var(--dk);border:1px solid var(--gold);border-radius:12px;padding:22px;margin:auto;}
+.llimg{width:68px;height:68px;border-radius:12px;border:3px solid var(--glt);object-fit:cover;display:block;margin:0 auto 10px;}
+.ltitle{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:4px;background:linear-gradient(135deg,#FFE55C,#C9A84C,#FFD700,#8B6000,#FFD700,#FFE55C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s ease-in-out infinite;background-size:200% auto;text-align:center;margin-bottom:3px;}
+.lsubt{font-size:.62rem;color:var(--mu);letter-spacing:2px;font-family:'Space Mono',monospace;text-align:center;margin-bottom:16px;}
+/* TERMS READER inside login */
+.ltabs{display:flex;gap:4px;margin-bottom:8px;overflow-x:auto;scrollbar-width:none;}
+.ltabs::-webkit-scrollbar{display:none;}
+.ltab{flex-shrink:0;padding:5px 10px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:1px;border:1px solid var(--br);background:none;color:var(--mu);border-radius:4px;cursor:pointer;}
+.ltab.on{border-color:var(--gold);background:rgba(201,168,76,.12);color:var(--gold);}
+.ltab.done{border-color:var(--gr);color:var(--gr);}
+.ldoc{height:170px;overflow-y:auto;-webkit-overflow-scrolling:touch;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:6px;padding:10px;font-size:.76rem;color:var(--tx);line-height:1.7;margin-bottom:6px;}
+.ldoc h3{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--gold);margin:10px 0 3px;}
+.ldoc h3:first-child{margin-top:0;}
+.lstat{display:flex;justify-content:space-between;font-size:.62rem;font-family:'Space Mono',monospace;color:var(--mu);margin-bottom:12px;}
+.lstat span{color:var(--gold);}
+/* Checkboxes */
+.lchks{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;padding:10px;background:rgba(255,255,255,.02);border:1px solid var(--br);border-radius:6px;}
+.lchk{display:flex;align-items:flex-start;gap:7px;cursor:pointer;font-size:.76rem;color:var(--mu);line-height:1.5;}
+.lchk input{margin-top:2px;accent-color:var(--gold);flex-shrink:0;}
+.lchk strong{color:var(--tx);}
+/* Pricing */
+.lplans{display:flex;gap:8px;margin-bottom:14px;}
+.lplan{flex:1;background:rgba(255,255,255,.03);border:1px solid var(--br);border-radius:6px;padding:9px;text-align:center;}
+.lplan.pro{background:rgba(201,168,76,.07);border-color:var(--gold);position:relative;}
+.lplan-badge{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bk);padding:1px 8px;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:.65rem;letter-spacing:1px;white-space:nowrap;}
+.lplan-name{font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:2px;color:var(--mu);}
+.lplan-price{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold);}
+.lplan-note{font-size:.6rem;color:var(--mu);font-family:'Space Mono',monospace;}
+/* Pi button */
+.lpibtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:13px;background:linear-gradient(135deg,#5B1FA8,#7B2FBE,#9B4FDE);border:none;color:#fff;border-radius:8px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:700;letter-spacing:.5px;margin-bottom:7px;box-shadow:0 4px 18px rgba(91,31,168,.4);}
+.lpibtn:disabled{background:var(--br);box-shadow:none;cursor:not-allowed;opacity:.5;}
+.lpibtn:not(:disabled):active{transform:scale(.97);}
+.pi-icon{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:1rem;font-weight:bold;flex-shrink:0;}
+.lstatus{font-size:.62rem;color:var(--mu);font-family:'Space Mono',monospace;text-align:center;min-height:14px;margin-bottom:6px;}
+.lfoot{font-size:.6rem;color:var(--br);font-family:'Space Mono',monospace;text-align:center;line-height:1.7;}
+.lfoot a{color:var(--gold);cursor:pointer;text-decoration:underline;}
+
+/* KEYFRAMES */
+@keyframes gspin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+@keyframes gpulse{0%,100%{opacity:.4;}50%{opacity:.7;}}
+@keyframes shimmer{0%{background-position:0% center;}50%{background-position:100% center;}100%{background-position:0% center;}}
+@keyframes wave{0%,100%{height:4px;}50%{height:20px;}}
+@keyframes pred{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.4);}50%{box-shadow:0 0 0 8px rgba(231,76,60,0);}}
+
+/* LANDSCAPE */
+@media(orientation:landscape){
+  .feed{height:calc(100dvh - 120px);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .fcol{overflow-y:auto;}
+}
+/* RESPONSIVE */
+@media(max-width:900px){.rp{display:none;}.sb{width:160px;}}
+@media(max-width:640px){.sb{display:none;}.rp{display:none;}.lsub{display:none;}.htop{padding:6px 10px;}.ltxt{font-size:1.2rem;}.mbg{padding:0;}.mbox{width:100vw;max-height:100dvh;border-radius:0;}.mlist{grid-template-columns:1fr;}.ag{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HIDDEN TERMS CONTENT -->
+<div style="position:absolute;left:-9999px;overflow:hidden;">
+<div id="tc-terms"><h3>1. Overview</h3><p>Beatz4Pi is a music exchange community on Pi Network. By using it you agree to these Terms and Pi Network developer policies.</p><h3>2. Eligibility</h3><ul><li>Must be a verified Pi Network Pioneer.</li><li>Must be 18+ or have guardian consent.</li><li>One account per Pioneer.</li></ul><h3>3. Pi Payments</h3><p>All transactions use Pi via Pi Network official payment API. We never store Pi or your wallet keys.</p><h3>4. External Links</h3><p>You may share YouTube, Spotify, SoundCloud, Instagram and Facebook links. We are not responsible for third-party content.</p><h3>5. Subscription</h3><p>Pioneer Pro costs 1 Pi per month (1 Test Pi on Testnet). Payment goes to the Beatz4Pi app wallet. Non-refundable on Mainnet.</p><h3>6. File Transfers</h3><p>PM transfers limited to 64MB per message.</p><h3>7. Prohibited Content</h3><p>Spam, hate speech, profanity, adult content and non-music content result in immediate suspension.</p><h3>8. Termination</h3><p>We may suspend accounts violating these Terms or Pi Network policies.</p></div>
+<div id="tc-priv"><h3>1. Data We Collect</h3><p>Only what is needed: your Pi username, posts, links and messages.</p><h3>2. Authentication</h3><p>Handled by Pi Network. We receive only your username and UID, never your seed phrase or private keys.</p><h3>3. Storage</h3><p>Browser local storage only for session and preferences. No advertising cookies or third-party trackers.</p><h3>4. Messages</h3><p>Messages encrypted in transit. Files not permanently stored beyond delivery.</p><h3>5. Your Rights</h3><ul><li>Access your data</li><li>Delete your account</li><li>Data portability</li><li>Withdraw consent at any time</li></ul><h3>6. Retention</h3><p>Data retained while account is active. Deleted within 30 days of account deletion.</p></div>
+<div id="tc-copy"><h3>1. Your Content</h3><p>You retain full copyright to beats and tracks you share. Posting does not transfer ownership.</p><h3>2. License to Display</h3><p>By posting you grant Beatz4Pi a limited, non-exclusive license to display your post in the platform only.</p><h3>3. External Links</h3><p>When sharing links you confirm you are the rights holder or have permission to share that content.</p><h3>4. Pi Licensing</h3><p>Beat licensing via Pi is a direct agreement between Pioneers. Keep Pi transaction records as proof.</p><h3>5. No Unauthorized Sampling</h3><p>Do not post content containing samples you do not have rights to use.</p><h3>6. File Transfer Responsibility</h3><p>Any files sent via PM are the sole responsibility of the sender. Beatz4Pi does not monitor, store or take responsibility for files transferred between Pioneers. All file transfers must comply with copyright law and Pi Network guidelines.</p><h3>6. Takedowns</h3><p>Report infringement with your name and the infringing URL. We act within 72 hours.</p><h3>7. Repeat Infringers</h3><p>Accounts with repeated violations permanently suspended per Pi Network guidelines.</p><h3>8. File Transfers</h3><p>File transfers via PM are temporary and stored only in the browser session — Beatz4Pi does not store any files on servers. Pioneers are solely responsible for ensuring they have full rights to share any files, beats, samples or recordings sent via the platform. Sharing copyrighted material without permission is strictly prohibited and may result in immediate account suspension.</p></div>
+<div id="tc-cond"><h3>1. Be a Real Pioneer</h3><p>Treat every Pioneer with respect, dignity and professionalism.</p><h3>2. Music Only</h3><p>All posts must be music or beat related. Spam removed immediately.</p><h3>3. No Fake Previews</h3><p>Links must lead to genuine music content. Misleading links result in permanent suspension.</p><h3>4. Language</h3><p>Profanity, hate speech, discrimination and harassment are strictly prohibited. Auto-filter is active.</p><h3>5. Fair Pi Dealing</h3><p>All Pi transactions must be honest. Scams result in account termination and reporting to Pi Network.</p><h3>6. Respect IP</h3><p>Only share music you have rights to. Do not steal beats or claim others work as your own.</p><h3>7. Pi Network Rules</h3><p>All Pi Network platform policies and KYC requirements apply in full within Beatz4Pi at all times.</p></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <img id="llogo" class="llimg" alt="Beatz4Pi">
+    <div class="ltitle">Beatz4Pi</div>
+    <div class="lsubt">Exchange Beatz n Music 4 Pi</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:2px;color:var(--gold);text-align:center;margin-bottom:8px;">READ &amp; AGREE TO CONTINUE</div>
+    <div class="ltabs" id="ltabs">
+      <button class="ltab on" data-i="0">Terms</button>
+      <button class="ltab" data-i="1">Privacy</button>
+      <button class="ltab" data-i="2">Copyright</button>
+      <button class="ltab" data-i="3">Rules</button>
+    </div>
+    <div class="ldoc" id="ldoc"></div>
+    <div class="lstat"><div id="lreadtxt">Scroll to read</div><span id="lreadcnt">0/4 read</span></div>
+    <div class="lchks">
+      <label class="lchk"><input type="checkbox" id="ck0"><strong>Terms of Service</strong></label>
+      <label class="lchk"><input type="checkbox" id="ck1"><strong>Privacy Policy</strong></label>
+      <label class="lchk"><input type="checkbox" id="ck2"><strong>Copyright Policy</strong></label>
+      <label class="lchk"><input type="checkbox" id="ck3"><strong>Community Rules</strong></label>
+      <label class="lchk"><input type="checkbox" id="ck4">I am <strong>18 years or older</strong></label>
+    </div>
+    <div class="lplans">
+      <div class="lplan"><div class="lplan-name">FREE</div><div class="lplan-price" style="color:var(--tx);">&#960;0</div><div class="lplan-note">Browse only</div></div>
+      <div class="lplan pro"><div class="lplan-badge">PRO</div><div class="lplan-name" style="color:var(--gold);">PIONEER</div><div class="lplan-price">&#960;1</div><div class="lplan-note">Test Pi/mo</div></div>
+    </div>
+    <button class="lpibtn" id="pi-btn" disabled>
+      <span class="pi-icon">&#960;</span><span id="pi-txt">Agree to all terms first</span>
+    </button>
+    <div class="lstatus" id="lstatus"></div>
+    <div class="lfoot">&#9888; Test Pi only &mdash; no real value. Switches to real Pi on Mainnet.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="htop">
+      <div class="lwrap"><div class="lspin"></div><div class="lglow"></div><img id="alogo" class="limg" alt="Beatz4Pi"></div>
+      <div><div class="ltxt">Beatz4Pi</div><div class="lsub">Exchange Beatz n Music 4 Pi</div></div>
+    </div>
+    <div class="navwrap"><nav id="mainnav">
+      <button class="nb on" id="nb-feed">&#128225; Feed</button>
+      <button class="nb" id="nb-prof">&#128100; My Profile</button>
+      <button class="nb" id="nb-msg">&#128172; Messages</button>
+      <button class="nb" id="nb-mem">&#128101; Members</button>
+      <button class="nb" id="nb-sub" style="border-color:var(--gold);color:var(--gold);">&#11088; PRO &#960;1</button>
+      <button class="nb" id="nb-rules">&#128203; Rules</button>
+    </nav></div>
+  </header>
+  <div class="main">
+    <div class="sb">
+      <div class="sbs"><div class="sbl">Discover</div>
+        <div class="sbi on" data-filter="all">&#127968; All Posts</div>
+        <div class="sbi" data-filter="beats">&#127899; Beats</div>
+        <div class="sbi" data-filter="vocals">&#127908; Vocals</div>
+        <div class="sbi" data-filter="tracks">&#127928; Full Tracks</div>
+        <div class="sbi" data-filter="loops">&#127911; Loops & Samples</div>
+      </div>
+      <div class="sbs"><div class="sbl">Genre</div>
+        <div class="sbi" data-genre="all">&#127925; All Genres</div>
+        <div class="sbi" data-genre="hiphop">&#127908; Hip-Hop / Trap</div>
+        <div class="sbi" data-genre="afrobeats">&#127758; Afrobeats</div>
+        <div class="sbi" data-genre="lofi">&#9729; Lo-Fi / Chill</div>
+        <div class="sbi" data-genre="rnb">&#127900; R&amp;B / Soul</div>
+        <div class="sbi" data-genre="drill">&#128293; Drill / Grime</div>
+        <div class="sbi" data-genre="house">&#9889; House / Electronic</div>
+        <div class="sbi" data-genre="jazz">&#127927; Jazz / Blues</div>
+        <div class="sbi" data-genre="gospel">&#127904; Gospel</div>
+        <div class="sbi" data-genre="reggae">&#127808; Reggae / Dancehall</div>
+      </div>
+      <div class="sbs"><div class="sbl">Platforms</div>
+        <div class="sbi">&#128250; YouTube</div><div class="sbi">&#128247; Instagram</div>
+        <div class="sbi">&#127925; Spotify</div><div class="sbi">&#9729; SoundCloud</div><div class="sbi">&#128216; Facebook</div>
+      </div>
+      <div class="sbs"><div class="sbl">Online Now</div>
+        <div class="sbi"><span style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#7B2FBE,#C9A84C);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;flex-shrink:0;">BK</span>&nbsp;BeatKing_Pi<span class="dot"></span></div>
+        <div class="sbi"><span style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#E1306C,#833AB4);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;flex-shrink:0;">MX</span>&nbsp;MixMaster_Pi<span class="dot"></span></div>
+        <div class="sbi"><span style="width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#1DB954,#0a4f22);display:inline-flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff;flex-shrink:0;">VB</span>&nbsp;VocalBooth</div>
+      </div>
+      <div class="sbs"><div class="sbl">Quick Links</div>
+        <div class="sbi" id="sl-t">&#128196; Terms</div><div class="sbi" id="sl-p">&#128274; Privacy</div>
+        <div class="sbi" id="sl-c">&#169; Copyright</div><div class="sbi" id="sl-r">&#129309; Rules</div>
+      </div>
+    </div>
+    <div class="fcol">
+      <!-- SEARCH BAR -->
+      <div id="searchbar" style="padding:10px 12px 0;flex-shrink:0;">
+        <div style="display:flex;gap:6px;">
+          <div style="position:relative;flex:1;">
+            <span style="position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--mu);font-size:.9rem;">&#128269;</span>
+            <input type="text" id="search-input" placeholder="Search pioneers, songs, beats..." 
+              style="width:100%;background:var(--dk);border:1px solid var(--br);color:var(--tx);padding:8px 9px 8px 30px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:.88rem;outline:none;">
+          </div>
+          <button id="search-btn" style="background:var(--gold);border:none;color:var(--bk);padding:8px 14px;border-radius:6px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:1px;cursor:pointer;flex-shrink:0;">SEARCH</button>
+          <button id="search-clear" style="display:none;background:var(--br);border:none;color:var(--tx);padding:8px 10px;border-radius:6px;cursor:pointer;font-size:.8rem;">&#10005;</button>
+        </div>
+        <div id="search-results" style="display:none;margin-top:8px;background:var(--panel);border:1px solid var(--br);border-radius:6px;overflow:hidden;">
+          <div id="search-list" style="max-height:280px;overflow-y:auto;"></div>
+        </div>
+      </div>
+      <div class="comp" id="comp">
+        <div class="ctop">
+          <div class="av" id="myav" style="background:linear-gradient(135deg,#7B2FBE,#C9A84C);">ME</div>
+          <textarea id="ptxt" placeholder="Share your beat, track or music link&#8230;"></textarea>
+        </div>
+        <div style="margin-bottom:8px;">
+          <input type="text" id="stitle" placeholder="&#127929; Song / Beat title (e.g. Trap God 808)" maxlength="100" style="width:100%;background:var(--dk);border:1px solid var(--br);color:var(--tx);padding:7px 10px;border-radius:4px;font-family:'Rajdhani',sans-serif;font-size:.9rem;outline:none;" >
+        </div>
+        <div class="notebox" id="nbox">
+          <textarea id="ntxt" placeholder="Short note &#8212; max 280 chars" maxlength="280" rows="2"></textarea>
+        </div>
+        <div class="crow" style="margin-top:8px;">
+          <button class="bnote" id="bnote">&#128221; Note</button>
+          <input class="linkin" id="plink" type="url" placeholder="&#128279; YouTube / Spotify / SC link&#8230;">
+          <select class="psel" id="pplat">
+            <option value="yt">YouTube</option><option value="sp">Spotify</option>
+            <option value="sc">SoundCloud</option><option value="ig">Instagram</option><option value="fb">Facebook</option>
+          </select>
+          <select class="psel" id="pgenre" style="max-width:110px;">
+            <option value="hiphop">Hip-Hop</option>
+            <option value="afrobeats">Afrobeats</option>
+            <option value="lofi">Lo-Fi</option>
+            <option value="rnb">R&amp;B/Soul</option>
+            <option value="drill">Drill</option>
+            <option value="house">House</option>
+            <option value="jazz">Jazz</option>
+            <option value="gospel">Gospel</option>
+            <option value="reggae">Reggae</option>
+            <option value="other">Other</option>
+          </select>
+          <button class="bpost" id="bpost">POST IT</button>
+        </div>
+        <div id="fwarn"></div>
+      </div>
+      <div id="fbanner">
+        <div class="fbar">
+          <span>&#128274; Browse only &#8212; subscribe to post &amp; interact</span>
+          <button id="get-pro">&#11088; GET PRO</button>
+        </div>
+        <div class="procard">
+          <div style="font-size:2rem;">&#11088;</div>
+          <div style="flex:1;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--gold);">PIONEER PRO</div>
+            <div style="font-size:.74rem;color:var(--tx);">Post &#8226; Like &#8226; Comment &#8226; DM &#8226; Trade &#8226; Voice</div>
+            <div style="font-size:.64rem;color:var(--mu);font-family:'Space Mono',monospace;">Test Pi only &#8212; switches to real Pi on Mainnet</div>
+          </div>
+          <div style="text-align:center;flex-shrink:0;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;color:var(--gold);line-height:1;">&#960;1</div>
+            <div style="font-size:.58rem;color:var(--mu);font-family:'Space Mono',monospace;">/month</div>
+            <button id="get-pro2" style="margin-top:5px;background:var(--gold);border:none;color:var(--bk);padding:5px 12px;border-radius:4px;font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:1px;cursor:pointer;display:block;width:100%;">SUBSCRIBE</button>
+          </div>
+        </div>
+      </div>
+      <div class="feed" id="feed"></div>
+      <div id="pview">
+        <div class="pfhd">
+          <div class="pftp">
+            <div class="pfav" id="pfav">ME</div>
+            <div style="flex:1;">
+              <div class="pfnm" id="pfnm">Pioneer</div>
+              <div class="pfro">Pi Network Pioneer</div>
+              <div class="pfst">
+                <div class="pfs"><div class="pfsn" id="pfcnt">0</div><div class="pfsl">POSTS</div></div>
+                <div class="pfs"><div class="pfsn" id="pffol">47</div><div class="pfsl">FOLLOWERS</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="pftabs">
+            <button class="pftab on" id="ptg">&#8862; GRID</button>
+            <button class="pftab" id="ptl">&#9776; LIST</button>
+          </div>
+        </div>
+        <div id="pgrid" class="pfgrid"></div>
+        <div id="plist" class="pflist" style="display:none;"></div>
+        <div id="pempty" class="pfempty" style="display:none;"><div style="font-size:2.5rem;margin-bottom:8px;">&#127899;</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;color:var(--gold);">No Posts Yet</div><div style="font-size:.74rem;font-family:'Space Mono',monospace;margin-top:4px;">Share your first beat!</div></div>
+      </div>
+    </div>
+    <div class="rp">
+      <div class="rpt">&#128293; Trending</div>
+      <div id="trendlist"></div>
+      <div class="rpt" style="margin-top:5px;">&#128203; Links</div>
+      <div style="padding:6px 10px;display:flex;flex-direction:column;gap:2px;">
+        <div class="sbi" id="rl-t">&#128196; Terms</div>
+        <div class="sbi" id="rl-p">&#128274; Privacy</div>
+        <div class="sbi" id="rl-c">&#169; Copyright</div>
+        <div class="sbi" id="rl-r">&#129309; Rules</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="mbg" id="chatmod">
+  <div class="mbox" style="border-color:var(--gold);">
+    <div class="mhd"><div class="av" id="chav" style="background:linear-gradient(135deg,#7B2FBE,#C9A84C);width:30px;height:30px;font-size:.76rem;">BK</div><div style="flex:1;"><div class="mtitle" id="chnm">BeatKing_Pi</div><div style="font-size:.6rem;color:var(--gr);font-family:'Space Mono',monospace;">&#9679; Online</div></div><button class="mclose" id="xc">&#10005;</button></div>
+    <div class="cmsgs" id="cmsgs"><div class="bbl in">Yo! Check my trap beat &#128293;<div class="btm">09:01</div></div><div class="bbl out">That fire! Send the stems &#127899;<div class="btm r">09:03</div></div></div>
+    <div class="cft">
+      <div class="cir2"><input type="text" id="chin" placeholder="Write a message&#8230;"></div>
+      <div class="cats">
+        <button class="cbtn file" id="bf">&#128206; File (64MB)</button>
+        <input type="file" id="fup" style="display:none" accept="audio/*,video/*,.zip,.wav,.mp3,.flac">
+        <button class="cbtn rec" id="rb">&#127895; Rec</button>
+        <button class="cbtn send" id="bs">Send &#9654;</button>
+      </div>
+      <div class="fnote">Max 64 MB per transfer</div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBERS -->
+<div class="mbg" id="membmod">
+  <div class="mbox" style="max-width:640px;max-height:92vh;">
+    <div class="mhd"><div class="mtitle">&#128101; Pioneer Members</div><span id="mcnt" style="font-size:.66rem;color:var(--mu);font-family:'Space Mono',monospace;">&#8212;</span><button class="mclose" id="xm">&#10005;</button></div>
+    <div class="msrch"><input type="text" id="msq" placeholder="Search Pioneers&#8230;"><button id="msb">Go</button></div>
+    <div class="mcats" id="mcats">
+      <button class="mcat on" data-cat="all">All</button>
+      <button class="mcat" data-cat="producer">Producers</button>
+      <button class="mcat" data-cat="musician">Musicians</button>
+      <button class="mcat" data-cat="company">Companies</button>
+      <button class="mcat" data-cat="label">Labels</button>
+      <button class="mcat" data-cat="dj">DJs</button>
+      <button class="mcat" data-cat="following">Following</button>
+    </div>
+    <div class="mlist" id="mlist"></div>
+    <div class="addf"><h4>Add a Pioneer</h4>
+      <div class="ag">
+        <input type="text" id="an" placeholder="Pi Username *">
+        <select id="ar"><option value="producer">Producer</option><option value="musician">Musician</option><option value="company">Company</option><option value="label">Label</option><option value="dj">DJ</option></select>
+        <input type="text" id="ap" placeholder="Platforms (YT, IG, SP&#8230;)">
+        <input type="text" id="agn" placeholder="Genre / Style">
+        <textarea id="ab" rows="2" placeholder="Short bio&#8230;"></textarea>
+      </div>
+      <button class="badd" id="bam">ADD PIONEER</button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMS MODAL -->
+<div class="mbg" id="termsmod">
+  <div class="mbox">
+    <div class="mhd"><div class="mtitle" id="ttitle">Terms</div><button class="mclose" id="xt">&#10005;</button></div>
+    <div class="ttabs" id="ttabs">
+      <button class="ttab on" data-sec="terms">Terms</button>
+      <button class="ttab" data-sec="privacy">Privacy</button>
+      <button class="ttab" data-sec="copyright">Copyright</button>
+      <button class="ttab" data-sec="conduct">Rules</button>
+    </div>
+    <div class="tbody" id="tbody"></div>
+  </div>
+</div>
+
+<!-- SUBSCRIPTION -->
+<div class="mbg" id="submod">
+  <div class="mbox" style="max-width:520px;">
+    <div class="mhd"><div class="mtitle">&#11088; Beatz4Pi Pro</div><span id="netlabel" style="font-size:.62rem;color:var(--gold);font-family:'Space Mono',monospace;padding:2px 7px;border:1px solid rgba(201,168,76,.3);border-radius:3px;background:rgba(201,168,76,.08);">TESTNET</span><button class="mclose" id="xsub">&#10005;</button></div>
+    <div style="padding:10px 14px;background:rgba(201,168,76,.06);border-bottom:1px solid rgba(201,168,76,.15);">
+      <div style="font-size:.73rem;color:var(--tx);line-height:1.7;font-family:'Rajdhani',sans-serif;"><strong style="color:var(--gold);">The app is fully real and working.</strong> During Testnet, subscriptions use <strong>Test Pi</strong> (free from Pi faucet, no real value). Switches to real Pi automatically on Mainnet.</div>
+      <div style="margin-top:7px;padding:6px 9px;background:rgba(123,47,190,.1);border:1px solid rgba(123,47,190,.3);border-radius:4px;font-size:.67rem;color:var(--pult);font-family:'Space Mono',monospace;">&#128241; Get Test Pi: Pi Mining App &#8594; Menu &#8594; Pi Utilities &#8594; Testnet &#8594; Request</div>
+    </div>
+    <div style="display:flex;gap:10px;padding:14px;">
+      <div class="plan"><div class="plan-name" style="color:var(--mu);">FREE</div><div class="plan-price" style="color:var(--tx);">&#960;0</div><div class="plan-feat"><div>&#10003; Browse feed</div><div>&#10003; Read posts</div><div>&#10003; View members</div><div><span>&#10007; Post</span></div><div><span>&#10007; Like / Comment</span></div><div><span>&#10007; DM / Voice</span></div><div><span>&#10007; Pro badge</span></div></div><div style="padding:9px;background:var(--br);border-radius:5px;text-align:center;font-size:.78rem;color:var(--mu);">CURRENT PLAN</div></div>
+      <div class="plan pro"><div class="plan-badge">POPULAR</div><div class="plan-name" style="color:var(--gold);">PIONEER PRO</div><div class="plan-price" style="color:var(--gold);">&#960;1</div><div class="plan-feat"><div>&#10003; Everything in Free</div><div>&#11088; Pro badge</div><div>&#128293; Post beats &amp; tracks</div><div>&#10084; Like &amp; comment</div><div>&#128172; DM Pioneers</div><div>&#127895; Voice messages</div><div>&#128176; Pi licensing</div></div>
+      <button id="sub-btn" style="width:100%;padding:11px;background:linear-gradient(135deg,#C9A84C,#FFD700);border:none;border-radius:5px;color:var(--bk);font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:2px;cursor:pointer;">SUBSCRIBE &#8212; 1 TEST PI</button>
+      <div id="sub-status" style="text-align:center;font-size:.65rem;color:var(--mu);font-family:'Space Mono',monospace;margin-top:5px;min-height:14px;"></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--br);padding:13px 14px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:.88rem;letter-spacing:2px;color:var(--gold);margin-bottom:9px;">&#11088; PRO PIONEERS</div>
+      <div id="pro-list" style="display:flex;flex-direction:column;gap:7px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE -->
+<div class="mbg" id="delmod" style="z-index:2000;">
+  <div class="mbox" style="border-color:var(--rd);max-width:280px;padding:20px;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">&#128465;</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:2px;color:var(--rd);margin-bottom:6px;">Delete Post?</div>
+    <div style="font-size:.76rem;color:var(--mu);margin-bottom:16px;line-height:1.6;">This permanently removes your post.</div>
+    <div style="display:flex;gap:7px;">
+      <button id="dno" style="flex:1;padding:9px;background:var(--br);border:none;color:var(--tx);border-radius:5px;font-family:'Rajdhani',sans-serif;font-weight:700;cursor:pointer;">Cancel</button>
+      <button id="dyes" style="flex:1;padding:9px;background:var(--rd);border:none;color:#fff;border-radius:5px;font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:1px;cursor:pointer;">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- POST DETAIL -->
+<div class="mbg" id="detmod">
+  <div class="mbox" style="max-width:430px;">
+    <div class="mhd"><div class="mtitle">Post</div><button id="ddel" style="padding:4px 10px;background:var(--rd);border:none;color:#fff;border-radius:4px;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;">&#128465; Delete</button><button class="mclose" id="xd" style="margin-left:4px;">&#10005;</button></div>
+    <div id="detbody" style="padding:12px;overflow-y:auto;max-height:70vh;"></div>
+  </div>
+</div>
+
+<div id="notif"></div>
+<script>
+
+// ═══════════════════════════════════
+//  BEATZ4PI — Complete Clean JS
+// ═══════════════════════════════════
+
+function G(id){ return document.getElementById(id); }
+function show(id){ var e=G(id); if(e) e.classList.add('on'); }
+function hide(id){ var e=G(id); if(e) e.classList.remove('on'); }
+function notify(msg){ var n=G('notif'); if(!n)return; n.textContent=msg; n.classList.add('on'); clearTimeout(n._t); n._t=setTimeout(function(){n.classList.remove('on');},2800); }
+
+// ── LOGO ──
+var LOGO='data:image/jpeg;base64,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';
+var ll=G('llogo'); if(ll) ll.src=LOGO;
+var al=G('alogo'); if(al) al.src=LOGO;
+
+// ── STATE ──
+var me={name:'Pioneer',ini:'ME',color:'linear-gradient(135deg,#7B2FBE,#C9A84C)'};
+var isPro=false, isRec=false, ptab='grid', mcat='all', delId=null;
+var followed=new Set([3,6]);
+
+// ── DATA ──
+var PM={yt:['p-yt','YT'],sp:['p-sp','SP'],sc:['p-sc','SC'],ig:['p-ig','IG'],fb:['p-fb','FB']};
+var PI2={yt:'YT',sp:'SP',sc:'SC',ig:'IG',fb:'FB'};
+
+var PRO_NAMES=['BeatKing_Pi','MixMaster_Pi','GoldWax_Records','SoulKey_Pi','FreqLab_Pi','LoFi_Luna','VocalBooth_Pi','BassMechanic_Pi'];
+
+var posts=[
+  {id:1,title:'Trap God 808',user:'BeatKing_Pi',ini:'BK',bg:'linear-gradient(135deg,#7B2FBE,#C9A84C)',time:'2 min ago',note:'Just finished this banger at 3am! Who produces at night?',plat:'yt',link:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',likes:24,dislikes:2,cmts:[{u:'MixMaster',t:'This KNOCKS!'},{u:'VocalBooth',t:'Need vocals ASAP'}]},
+  {id:2,title:'Afro Night Session',user:'MixMaster_Pi',ini:'MX',bg:'linear-gradient(135deg,#E1306C,#833AB4)',time:'18 min ago',note:'Afrobeats session last night. Non-exclusive license 1 Pi — DM!',plat:'sp',link:'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC',likes:41,dislikes:1,cmts:[{u:'BeatKing_Pi',t:'That rhythm!'},{u:'LoFi_Luna',t:'Incredible'}]},
+  {id:3,title:'Drum Kit Vol.3',user:'DrumR_Pi',ini:'DR',bg:'linear-gradient(135deg,#FF5500,#993300)',time:'1 hr ago',note:'200 sample drum kit, all original. Full pack 3 Pi via DM.',plat:'sc',link:'https://soundcloud.com/skrillex/scary-monsters-and-nice-sprites',likes:18,dislikes:0,cmts:[]},
+  {id:4,title:'Lo-Fi Sunset',user:'VocalBooth_Pi',ini:'VB',bg:'linear-gradient(135deg,#1DB954,#0a4f22)',time:'3 hr ago',note:'Lo-fi chill beat. Free non-commercial with credit. 0.5 Pi premium.',plat:'yt',link:'https://www.youtube.com/watch?v=5qap5aO4i9A',likes:67,dislikes:3,cmts:[{u:'DrumR_Pi',t:'Therapeutic'},{u:'BeatKing_Pi',t:'On playlist'}]},
+  {id:5,title:'Jazz Chop Flip',user:'LoFi_Luna',ini:'LL',bg:'linear-gradient(135deg,#4A90D9,#1a3a6a)',time:'4 hr ago',note:'Jazz chop flip from a vinyl record I found at the market.',plat:'sc',link:'https://soundcloud.com/nocopyrightsounds/alan-walker-fade',likes:89,dislikes:4,cmts:[{u:'VocalBooth_Pi',t:'That crackle'},{u:'SoulKey_Pi',t:'Need this!'}]},
+  {id:6,title:'Soul Keys Live',user:'SoulKey_Pi',ini:'SK',bg:'linear-gradient(135deg,#F39C12,#8B4513)',time:'5 hr ago',note:'Keys recorded live, no plugins. Pure soul. Collab open. 2 Pi/track.',plat:'yt',link:'https://www.youtube.com/watch?v=h_D3VFfhvs4',likes:55,dislikes:2,cmts:[{u:'BeatKing_Pi',t:'Real music'}]},
+  {id:7,title:'Dark Melody Pack',user:'GoldWax_Records',ini:'GW',bg:'linear-gradient(135deg,#C9A84C,#5a3e00)',time:'6 hr ago',note:'Scouting Pioneer artists for next release. Drop your best track. We pay in Pi.',plat:'sp',link:'https://open.spotify.com/track/1Qrg8KqiBpW07V7PV3tDnE',likes:112,dislikes:8,cmts:[{u:'LoFi_Luna',t:'Sending demo!'},{u:'DrumR_Pi',t:'DM sent'}]},
+  {id:8,title:'Pioneer Scout',user:'BassMechanic_Pi',ini:'BM',bg:'linear-gradient(135deg,#1ABC9C,#0a4f40)',time:'7 hr ago',note:'Deep house set 2hr mix. Full energy. Pi bookings open.',plat:'yt',link:'https://www.youtube.com/watch?v=09R8_2nJtjg',likes:44,dislikes:1,cmts:[{u:'MixMaster_Pi',t:'Respect!'}]},
+  {id:9,title:'Deep House Mix',user:'FreqLab_Pi',ini:'FL',bg:'linear-gradient(135deg,#2980B9,#0a2a4f)',time:'8 hr ago',note:'Free mixing masterclass on YouTube. No catch, just giving back to the community.',plat:'yt',link:'https://www.youtube.com/watch?v=tgIqecROs5M',likes:201,dislikes:3,cmts:[{u:'RhythmRita_Pi',t:'So helpful!'},{u:'DrumR_Pi',t:'Needed this'}]},
+  {id:10,title:'First Steps',user:'RhythmRita_Pi',ini:'RR',bg:'linear-gradient(135deg,#9B59B6,#4a1060)',time:'9 hr ago',note:'First post here! Singer-songwriter from Lagos. Happy to collab for Pi.',plat:'ig',link:'https://instagram.com',likes:78,dislikes:0,cmts:[{u:'VocalBooth_Pi',t:'Welcome!'},{u:'BeatKing_Pi',t:'Need beats?'}]},
+  {id:11,title:'Guitar Loop Pack',user:'ChordCraft_Pi',ini:'CC',bg:'linear-gradient(135deg,#27AE60,#0a4f20)',time:'10 hr ago',note:'Guitar loop pack — 20 loops, Martin D28. Perfect for hip-hop. 2 Pi.',plat:'yt',link:'https://www.youtube.com/watch?v=dQw4w9WgXcQ',likes:29,dislikes:2,cmts:[{u:'SoulKey_Pi',t:'Martin D28!'}]},
+  {id:12,title:'Mixing Masterclass',user:'TrappaDon_Pi',ini:'TD',bg:'linear-gradient(135deg,#E74C3C,#7B1010)',time:'11 hr ago',note:'Dark melody pack 10 loops, 808 kit. 1.5 Pi for the full pack.',plat:'sc',link:'https://soundcloud.com/diplo/diplo-thomas-wesley',likes:33,dislikes:5,cmts:[{u:'DrumR_Pi',t:'That minor chord'}]},
+];
+
+var members=[
+  {id:1,name:'BeatKing_Pi',role:'producer',genre:'Trap/Hip-Hop',plats:'YT,SC,IG',bio:'Award-winning beat maker. 500+ beats sold.'},
+  {id:2,name:'MixMaster_Pi',role:'dj',genre:'Afrobeats/House',plats:'SP,IG,FB',bio:'International DJ. Pi bookings.'},
+  {id:3,name:'VocalBooth_Pi',role:'musician',genre:'R&B/Soul',plats:'YT,SP',bio:'Vocalist & songwriter. Collab-ready.'},
+  {id:4,name:'DrumR_Pi',role:'producer',genre:'Drill/Grime',plats:'SC,IG',bio:'Drum programming specialist.'},
+  {id:5,name:'SoundLab_Co',role:'company',genre:'Studio/Mixing',plats:'FB,YT,IG',bio:'Recording studio. Pi welcome.'},
+  {id:6,name:'GoldWax_Records',role:'label',genre:'All Genres',plats:'SP,YT',bio:'Pi-native record label. DM for info.'},
+  {id:7,name:'LoFi_Luna',role:'musician',genre:'Lo-Fi/Jazz',plats:'SP,YT,SC',bio:'Lo-fi producer. Chill vibes.'},
+  {id:8,name:'PiBeats_Studio',role:'company',genre:'Production',plats:'IG,FB',bio:'Beat rental studio accepting Pi.'},
+];
+
+var ROLE={
+  producer:{lbl:'Producer',bg:'rgba(201,168,76,.15)',col:'#C9A84C',bd:'rgba(201,168,76,.3)',av:'linear-gradient(135deg,#C9A84C,#8B6914)'},
+  musician:{lbl:'Musician',bg:'rgba(123,47,190,.15)',col:'#9B4FDE',bd:'rgba(123,47,190,.3)',av:'linear-gradient(135deg,#7B2FBE,#4A1A7A)'},
+  company:{lbl:'Company',bg:'rgba(46,204,113,.1)',col:'#2ECC71',bd:'rgba(46,204,113,.3)',av:'linear-gradient(135deg,#2ECC71,#1A7A44)'},
+  label:{lbl:'Label',bg:'rgba(231,76,60,.1)',col:'#E74C3C',bd:'rgba(231,76,60,.3)',av:'linear-gradient(135deg,#E74C3C,#8A2020)'},
+  dj:{lbl:'DJ',bg:'rgba(255,85,0,.1)',col:'#FF5500',bd:'rgba(255,85,0,.3)',av:'linear-gradient(135deg,#FF5500,#993300)'},
+};
+
+var TERMS_CONTENT={
+  terms:{title:'Terms of Service',src:'tc-terms'},
+  privacy:{title:'Privacy Policy',src:'tc-priv'},
+  copyright:{title:'Copyright Policy',src:'tc-copy'},
+  conduct:{title:'Community Rules',src:'tc-cond'},
+};
+
+var TRENDING=[
+  {n:'01',name:'Trap God 808',art:'BeatKing_Pi',pi:'Pi 2.0'},
+  {n:'02',name:'Afro Night Session',art:'MixMaster_Pi',pi:'Pi 1.0'},
+  {n:'03',name:'Lo-Fi Sunset',art:'VocalBooth_Pi',pi:'Pi 0.5'},
+  {n:'04',name:'Drill Drums Vol.3',art:'DrumR_Pi',pi:'Pi 3.0'},
+  {n:'05',name:'Soul Chop Flip',art:'LoFi_Luna',pi:'Pi 1.5'},
+];
+
+// ── PIONEER POOL for infinite scroll ──
+var POOL=[
+  {user:'SampleKing_Pi',ini:'SK',bg:'linear-gradient(135deg,#8E44AD,#3a0a6f)'},
+  {user:'VinylVibes_Pi',ini:'VV',bg:'linear-gradient(135deg,#D35400,#7a2a00)'},
+  {user:'JazzCat_Pi',ini:'JC',bg:'linear-gradient(135deg,#16A085,#0a4f3a)'},
+  {user:'AfroBeatz_Pi',ini:'AB',bg:'linear-gradient(135deg,#F39C12,#2ECC71)'},
+  {user:'NightOwl_Pi',ini:'NO',bg:'linear-gradient(135deg,#2C3E50,#4A235A)'},
+  {user:'DrillKing_Pi',ini:'DK',bg:'linear-gradient(135deg,#1C2833,#784212)'},
+  {user:'WaveRider_Pi',ini:'WR',bg:'linear-gradient(135deg,#1A5276,#117A65)'},
+  {user:'GhanaBeatz_Pi',ini:'GB',bg:'linear-gradient(135deg,#1E8449,#F39C12)'},
+  {user:'SynthWave_Pi',ini:'SW',bg:'linear-gradient(135deg,#7D3C98,#2874A6)'},
+  {user:'CrateDigger_Pi',ini:'CD',bg:'linear-gradient(135deg,#784212,#1A5276)'},
+  {user:'MidiMaestro_Pi',ini:'MI',bg:'linear-gradient(135deg,#2E86C1,#A93226)'},
+  {user:'ProdByLex_Pi',ini:'PL',bg:'linear-gradient(135deg,#922B21,#1F618D)'},
+];
+
+var NOTES=[
+  'Just dropped a new beat — 808s hitting different tonight',
+  'New pack out! 20 loops, all original. DM for details.',
+  'Who wants to collab? Looking for vocalists and rappers.',
+  'Live session recording from last night. Pure energy.',
+  'Trap beat with live guitar sample. Pi licensing available.',
+  'Lo-fi study beat — perfect for late night sessions',
+  'Afrobeats fusion — open for licensing. 1 Pi non-exclusive.',
+  'Drum kit pack coming soon. Preview link below!',
+  'New EP dropping next week. First single available now.',
+  'Looking for producers to swap beats. Pioneer to Pioneer!',
+  'Just hit 100 beats sold! Thank you Pioneers',
+  'Dark trap melody — full pack available for 2 Pi.',
+  'Jazz chop flip I made from a vinyl find',
+  'Gospel influenced RnB beat — unique sound.',
+  'Drill banger! 808s are crazy on this one.',
+  'Chill house loop pack — 15 loops for 1.5 Pi.',
+  'Soul sample flip — old school meets new school.',
+  'Full beat tape available. 10 tracks for 3 Pi.',
+  'Scouting vocalists for a Pi-funded project. DM me!',
+  'Boom bap classic — samples cleared and ready.',
+];
+
+var LINKS=[
+  'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+  'https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC',
+  'https://soundcloud.com/skrillex/scary-monsters-and-nice-sprites',
+  'https://www.youtube.com/watch?v=5qap5aO4i9A',
+  'https://soundcloud.com/nocopyrightsounds/alan-walker-fade',
+  'https://www.youtube.com/watch?v=h_D3VFfhvs4',
+  'https://www.youtube.com/watch?v=09R8_2nJtjg',
+];
+
+var PLATS=['yt','sp','sc','yt','sp','sc','yt'];
+var genId=2000, feedLoading=false;
+
+function rnd(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function genPost(){
+  genId++;
+  var p=rnd(POOL), mins=Math.floor(Math.random()*1440);
+  var platIdx=Math.floor(Math.random()*PLATS.length);
+  var beatTitles=['Trap God 808','Night Vibes','Dark Melody','Soul Chop','808 Madness','Jazz Flip','Afro Fusion','Lo-Fi Dream','Drill Wave','Gospel Keys','Bass Drop','Crate Dig'];
+  var genres=['hiphop','afrobeats','lofi','rnb','drill','house','jazz','gospel','reggae','other'];
+  return {id:genId,user:p.user,ini:p.ini,bg:p.bg,
+    time:(mins<60?mins+' min':Math.floor(mins/60)+' hr')+' ago',
+    title:rnd(beatTitles)+' Vol.'+(Math.floor(Math.random()*9)+1),
+    genre:rnd(genres),
+    note:rnd(NOTES),plat:PLATS[platIdx],link:LINKS[platIdx]||LINKS[0],
+    likes:Math.floor(Math.random()*200),dislikes:Math.floor(Math.random()*8),
+    cmts:[],_gen:true};
+}
+
+// ── CONTENT FILTER ──
+var BAD=['fuck','shit','bitch','asshole','cunt','cock','nigger','nigga','faggot','retard','slut','wanker','prick','bollocks'];
+var SPAM=['click here','buy now','free money','only fans','onlyfans','porn','xxx','crypto pump'];
+var ALLOWED_HOSTS=['youtube.com','youtu.be','spotify.com','soundcloud.com','instagram.com','facebook.com','tiktok.com','bandcamp.com','audiomack.com','apple.com','deezer.com','tidal.com','mixcloud.com'];
+
+function filterText(txt){
+  if(!txt)return{ok:true,clean:txt};
+  var lo=txt.toLowerCase();
+  for(var i=0;i<BAD.length;i++) if(lo.indexOf(BAD[i])>-1) return{ok:false,reason:'Language not allowed. Keep it respectful.'};
+  for(var i=0;i<SPAM.length;i++) if(lo.indexOf(SPAM[i])>-1) return{ok:false,reason:'This looks like spam. Share genuine music only.'};
+  if(txt.length>500)return{ok:false,reason:'Too long. Max 500 characters.'};
+  var clean=txt;
+  BAD.forEach(function(w){clean=clean.replace(new RegExp(w,'gi'),function(m){return '*'.repeat(m.length);});});
+  return{ok:true,clean:clean};
+}
+function isValidLink(url){
+  if(!url||url==='#')return true;
+  try{var h=new URL(url).hostname.replace('www.','');return ALLOWED_HOSTS.some(function(a){return h===a||h.endsWith('.'+a);});}catch(e){return false;}
+}
+var postTimes=[];
+function rateOk(){var now=Date.now();postTimes=postTimes.filter(function(t){return now-t<60000;});if(postTimes.length>=5)return false;postTimes.push(now);return true;}
+
+// ── PRO GATE ──
+function requirePro(what){
+  if(isPro)return true;
+  var msg=G('sub-gate-msg');
+  if(msg){msg.textContent=what+' requires Pioneer Pro. Subscribe for 1 Test Pi!';msg.style.display='block';}
+  show('submod');
+  renderProList();
+  return false;
+}
+
+// ── PI ENV ──
+var PI_ENV=(function(){
+  var inPi=/PiBrowser/i.test(navigator.userAgent);
+  var isLocal=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';
+  var isMain=inPi&&!isLocal;
+  return{sandbox:!isMain,isMainnet:isMain,inPiBrowser:inPi,label:isMain?'MAINNET':'TESTNET',currency:isMain?'Pi':'Test Pi'};
+})();
+
+// ── LOGIN / TERMS ──
+var DOC_KEYS=['terms','priv','copy','cond'];
+var DOC_SRC=['tc-terms','tc-priv','tc-copy','tc-cond'];
+var docRead=[false,false,false,false];
+var curDoc=0;
+
+function initLogin(){
+  var ll=G('llogo'); if(ll)ll.src=LOGO;
+  loadDoc(0);
+  var tabs=G('ltabs').querySelectorAll('.ltab');
+  tabs.forEach(function(btn,i){
+    (function(idx){btn.addEventListener('click',function(){loadDoc(idx);});})(i);
+  });
+  ['ck0','ck1','ck2','ck3','ck4'].forEach(function(id){
+    var el=G(id); if(el)el.addEventListener('change',checkAccept);
+  });
+  var ldoc=G('ldoc'); if(ldoc)ldoc.addEventListener('scroll',onDocScroll,{passive:true});
+  // Check localStorage
+  try{if(localStorage.getItem('b4p_v2')==='1'){docRead=[true,true,true,true];['ck0','ck1','ck2','ck3'].forEach(function(id){var e=G(id);if(e)e.checked=true;});checkAccept();updateDocCount();}}catch(e){}
+  // Terms footer links
+  
+  
+  
+}
+
+function loadDoc(idx){
+  curDoc=idx;
+  var src=G(DOC_SRC[idx]);
+  var area=G('ldoc');
+  if(area&&src){area.innerHTML='<strong style="color:var(--gold);font-family:Bebas Neue,sans-serif;font-size:.9rem;letter-spacing:1px;">'+['Terms of Service','Privacy Policy','Copyright Policy','Community Rules'][idx]+'</strong><br><br>'+src.innerHTML;area.scrollTop=0;}
+  var tabs=G('ltabs').querySelectorAll('.ltab');
+  tabs.forEach(function(btn,i){
+    btn.className='ltab'+(i===idx?' on':docRead[i]?' done':'');
+  });
+  var rt=G('lreadtxt'); if(rt)rt.textContent=docRead[idx]?'Read':'Scroll to read';
+}
+
+function onDocScroll(){
+  var el=G('ldoc'); if(!el)return;
+  if(el.scrollHeight-el.scrollTop-el.clientHeight<60&&!docRead[curDoc]){
+    docRead[curDoc]=true;
+    var chk=G('ck'+curDoc); if(chk)chk.checked=true;
+    var rt=G('lreadtxt'); if(rt)rt.textContent='Read';
+    updateDocCount(); checkAccept();
+    for(var i=0;i<4;i++){if(!docRead[i]){var ni=i;setTimeout(function(){loadDoc(ni);},500);break;}}
+  }
+}
+
+function updateDocCount(){
+  var c=docRead.filter(Boolean).length;
+  var rc=G('lreadcnt'); if(rc)rc.textContent=c+'/4 read';
+}
+
+function checkAccept(){
+  var all=['ck0','ck1','ck2','ck3','ck4'].every(function(id){var e=G(id);return e&&e.checked;});
+  var btn=G('pi-btn'); if(!btn)return;
+  var txt=G('pi-txt');
+  btn.disabled=!all;
+  if(txt)txt.textContent=all?'Sign in with Pi Network':'Agree to all terms first';
+  if(all){try{localStorage.setItem('b4p_v2','1');}catch(e){}}
+}
+
+// ── PI AUTH ──
+var pb=G('pi-btn');
+if(pb)pb.addEventListener('click',async function(){
+  var st=G('lstatus'); if(st)st.textContent='Connecting...';
+  if(window.Pi){
+    // Use existing auth result or re-authenticate
+    var auth = piAuthResult || await piConnect();
+    if(auth && auth.user && auth.user.username){
+      me.name = auth.user.username;
+      me.ini = me.name.slice(0,2).toUpperCase();
+      bootApp();
+    } else {
+      sandboxBoot();
+    }
+  } else {
+    sandboxBoot();
+  }
+});
+
+function sandboxBoot(){
+  var st=G('lstatus'); if(st)st.textContent='Preview mode...';
+  me.name='Pioneer_'+Math.floor(Math.random()*9000+1000);
+  me.ini='ME';
+  setTimeout(bootApp,400);
+}
+
+function bootApp(){
+  G('login').style.display='none';
+  show('app');
+  var av=G('myav'); if(av)av.textContent=me.ini;
+  var pav=G('pfav'); if(pav)pav.textContent=me.ini;
+  // Save pioneer to members list if not already there
+  if(me.name&&me.name!=='Pioneer'&&!me.name.startsWith('Pioneer_')){
+    var exists=members.find(function(m){return m.name.toLowerCase()===me.name.toLowerCase();});
+    if(!exists){
+      members.unshift({id:Date.now(),name:me.name,role:'musician',genre:'Music',plats:'—',bio:'Pioneer on Beatz4Pi',_self:true});
+    }
+  }
+  renderFeed();
+  renderTrending();
+  notify('Welcome, '+me.name+'!');
+  // Update network badge
+  var nl=G('netlabel'); if(nl){nl.textContent=PI_ENV.label;nl.style.color=PI_ENV.isMainnet?'var(--gr)':'var(--gold)';}
+}
+
+// ── NAV ──
+function setNav(id){document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});var b=G(id);if(b)b.classList.add('on');}
+function showFeed(){G('feed').style.display='flex';var c=G('comp');if(c)c.style.display='block';var pv=G('pview');if(pv)pv.classList.remove('on');setNav('nb-feed');}
+function showProf(){G('feed').style.display='none';var c=G('comp');if(c)c.style.display='none';var pv=G('pview');if(pv)pv.classList.add('on');setNav('nb-prof');renderProf();}
+
+var nbf=G('nb-feed'); if(nbf)nbf.addEventListener('click',showFeed);
+var nbp=G('nb-prof'); if(nbp)nbp.addEventListener('click',showProf);
+var nbm=G('nb-msg'); if(nbm)nbm.addEventListener('click',function(){openChat(null,null);});
+var nbme=G('nb-mem'); if(nbme)nbme.addEventListener('click',function(){openMembers();});
+var nbs=G('nb-sub'); if(nbs)nbs.addEventListener('click',function(){openSub();});
+var nbr=G('nb-rules'); if(nbr)nbr.addEventListener('click',function(){openTerms('terms');});
+var slt=G('sl-t'); if(slt)slt.addEventListener('click',function(){openTerms('terms');});
+var slp=G('sl-p'); if(slp)slp.addEventListener('click',function(){openTerms('privacy');});
+var slc=G('sl-c'); if(slc)slc.addEventListener('click',function(){openTerms('copyright');});
+var slr=G('sl-r'); if(slr)slr.addEventListener('click',function(){openTerms('conduct');});
+var rlt=G('rl-t'); if(rlt)rlt.addEventListener('click',function(){openTerms('terms');});
+var rlp=G('rl-p'); if(rlp)rlp.addEventListener('click',function(){openTerms('privacy');});
+var rlc=G('rl-c'); if(rlc)rlc.addEventListener('click',function(){openTerms('copyright');});
+var rlr=G('rl-r'); if(rlr)rlr.addEventListener('click',function(){openTerms('conduct');});
+var gp=G('get-pro'); if(gp)gp.addEventListener('click',function(){openSub();});
+var gp2=G('get-pro2'); if(gp2)gp2.addEventListener('click',function(){openSub();});
+
+// ── COMPOSER ──
+var bn=G('bnote'); if(bn)bn.addEventListener('click',function(){var nb=G('nbox');if(nb)nb.classList.toggle('on');this.classList.toggle('on');var nt=G('ntxt');if(nt&&G('nbox').classList.contains('on'))nt.focus();});
+var bp=G('bpost'); if(bp)bp.addEventListener('click',submitPost);
+
+function submitPost(){
+  if(!requirePro('Posting'))return;
+  var txt=(G('ptxt')||{}).value||'', note=(G('ntxt')||{}).value||'', link=(G('plink')||{}).value||'', plat=(G('pplat')||{}).value||'yt', title=(G('stitle')||{}).value||'', genre=(G('pgenre')||{}).value||'other';
+  txt=txt.trim(); note=note.trim(); link=link.trim(); title=title.trim();
+  if(!txt&&!note&&!link){notify('Add a note, text or link!');return;}
+  if(!rateOk()){notify('Slow down! Max 5 posts per minute.');return;}
+  var tc=filterText(txt); if(!tc.ok){showWarn(tc.reason);return;}
+  var nc=filterText(note); if(!nc.ok){showWarn(nc.reason);return;}
+  if(link&&!isValidLink(link)){showWarn('Only music platform links allowed.');return;}
+  var p={id:Date.now(),user:me.name,ini:me.ini,bg:me.color,time:'Just now',title:title,genre:genre,note:nc.clean||'',plat:plat,link:link||'#',likes:0,dislikes:0,cmts:[]};
+  posts.unshift(p);
+  if(G('ptxt'))G('ptxt').value='';
+  if(G('ntxt'))G('ntxt').value='';
+  if(G('plink'))G('plink').value='';
+  if(G('stitle'))G('stitle').value='';
+  var nb=G('nbox'); if(nb)nb.classList.remove('on');
+  var bn2=G('bnote'); if(bn2)bn2.classList.remove('on');
+  var card=buildPost(p); card.style.opacity='0';
+  var feed=G('feed'); if(feed){feed.prepend(card);requestAnimationFrame(function(){card.style.transition='opacity .3s';card.style.opacity='1';});}
+  attachSwipe(card);
+  notify('Posted!');
+}
+
+function showWarn(msg){
+  var w=G('fwarn'); if(!w)return;
+  w.textContent='Warning: '+msg; w.style.display='block';
+  clearTimeout(w._t); w._t=setTimeout(function(){w.style.display='none';},5000);
+}
+
+// ── EMBED ──
+function getYTId(url){var m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);return m?m[1]:null;}
+function getSPEmbed(url){var m=url.match(/spotify\.com\/(track|album|playlist|episode)\/([a-zA-Z0-9]+)/);return m?'https://open.spotify.com/embed/'+m[1]+'/'+m[2]+'?utm_source=generator&theme=0':null;}
+function getSCEmbed(url){return 'https://w.soundcloud.com/player/?url='+encodeURIComponent(url)+'&color=%23C9A84C&auto_play=false&visual=true';}
+
+function makeWave(){var w='';for(var i=0;i<14;i++)w+='<div class="wb" style="animation-delay:'+(i*0.08)+'s"></div>';return '<div class="wv">'+w+'</div>';}
+
+function buildEmbed(p){
+  var link=p.link||'';
+  var isYT=link.includes('youtube.com')||link.includes('youtu.be');
+  var isSP=link.includes('spotify.com');
+  var isSC=link.includes('soundcloud.com');
+  if(isYT){
+    var vid=getYTId(link);
+    if(vid){
+      return '<div class="psq" id="esq'+p.id+'">'+'<div class="ecov" data-ytid="'+vid+'" data-pid="'+p.id+'">'+'<img class="ethumb" src="https://img.youtube.com/vi/'+vid+'/hqdefault.jpg" alt="" onerror="this.style.display=\'none\'">'+'<button class="eplay" data-ytid="'+vid+'" data-pid="'+p.id+'">&#9654;</button>'+makeWave()+'<div class="elabel">&#128250; Tap to play</div></div></div>';
+    }
+  }
+  if(isSP){var sp=getSPEmbed(link);if(sp)return '<div class="psq"><iframe src="'+sp+'" allow="autoplay;clipboard-write;encrypted-media;fullscreen;picture-in-picture" loading="lazy"></iframe></div>';}
+  if(isSC){return '<div class="psq"><iframe src="'+getSCEmbed(link)+'" allow="autoplay" loading="lazy"></iframe></div>';}
+  var icon=link.includes('instagram')?'&#128247; Instagram':link.includes('facebook')?'&#128216; Facebook':'&#128279; Open';
+  return '<div class="psq" data-link="'+link+'">'+'<div class="ecov" data-link="'+link+'"><button class="eplay" data-link="'+link+'">&#9654;</button>'+makeWave()+'<div class="elabel">'+icon+'</div></div></div>';
+}
+
+function loadYT(vid,pid){var box=G('esq'+pid);if(box)box.innerHTML='<iframe src="https://www.youtube.com/embed/'+vid+'?autoplay=1&rel=0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe>';}
+
+// ── BUILD POST ──
+function buildPost(p){
+  var pc=PM[p.plat]||['p-sc','SC'];
+  var isOwn=(p.user===me.name);
+  var isPro2=PRO_NAMES.indexOf(p.user)>-1||(isPro&&p.user===me.name);
+  var cmtHtml='';
+  (p.cmts||[]).forEach(function(c){cmtHtml+='<div class="cmt"><div class="av" style="width:22px;height:22px;font-size:.58rem;background:linear-gradient(135deg,#7B2FBE,#C9A84C);">'+c.u.slice(0,2).toUpperCase()+'</div><div class="cb"><div class="cu">'+c.u+'</div><div class="ct">'+c.t+'</div></div></div>';});
+  var menu=isOwn?'<button class="pmenu" data-mid="'+p.id+'">&#8942;</button><div class="pdrop" id="mn'+p.id+'"><button class="pdi d" data-del="'+p.id+'">&#128465; Delete</button><button class="pdi" data-edit="1">&#9998; Edit</button></div>':'';
+  var d=document.createElement('div');
+  d.className='pc'; d.id='pc'+p.id;
+  d.innerHTML=
+    '<div class="ph"><div class="av" style="background:'+p.bg+';">'+p.ini+'</div>'+
+    '<div class="pm"><div class="pu">'+p.user+(isPro2?'<span class="pro-badge">PRO</span>':'')+'</div>'+(p.title?'<div style="font-size:.8rem;font-weight:700;color:var(--gold);margin-top:1px;">&#127929; '+p.title+'</div>':'')+'<div style="display:flex;align-items:center;gap:5px;"><div class="pt">'+p.time+'</div>'+(p.genre?'<span style="font-size:.55rem;background:rgba(123,47,190,.3);color:var(--pult);padding:1px 5px;border-radius:3px;font-family:Space Mono,monospace;text-transform:uppercase;">'+p.genre+'</span>':'')+'</div></div>'+
+    '<div><button class="pb '+pc[0]+'" data-link="'+p.link+'">'+pc[1]+'</button></div>'+
+    menu+'</div>'+
+    (p.note?'<div class="pnote">'+p.note+'</div>':'')+
+    buildEmbed(p)+
+    '<div class="plink" data-link="'+p.link+'">&#128279; Open on external platform</div>'+
+    '<div class="pacts">'+
+    '<button class="pa'+(p._liked?' liked':'')+'" data-like="'+p.id+'">&#10084; <span id="lc'+p.id+'">'+p.likes+'</span></button>'+
+    '<button class="pa'+(p._disliked?' disliked':'')+'" data-dis="'+p.id+'">&#128078; <span id="dc'+p.id+'">'+p.dislikes+'</span></button>'+
+    '<button class="pa" data-cmt="'+p.id+'">&#128172; '+(p.cmts?p.cmts.length:0)+'</button>'+
+    '<button class="pa" data-dm="'+p.user+'" data-di="'+p.ini+'">DM</button>'+
+    '<button class="pa" data-lic="1">&#960; License</button></div>'+
+    '<div class="cmts" id="cm'+p.id+'"><div id="cl'+p.id+'">'+cmtHtml+'</div>'+
+    '<div class="cir"><input type="text" id="ci'+p.id+'" placeholder="Add a comment..."><button data-pc="'+p.id+'">Post</button></div></div>';
+  return d;
+}
+
+// ── FEED CLICK DELEGATION ──
+var feedEl=G('feed');
+if(feedEl)feedEl.addEventListener('click',function(e){
+  var t=e.target, btn=t.closest('button')||t.closest('.plink')||t.closest('.ecov')||t;
+  // YouTube play
+  var ytel=t.closest('[data-ytid]');
+  if(ytel){loadYT(ytel.dataset.ytid,ytel.dataset.pid);return;}
+  // External link
+  if(btn.dataset&&btn.dataset.link&&btn.dataset.link!=='#'){window.open(btn.dataset.link,'_blank');return;}
+  // Like
+  if(btn.dataset&&btn.dataset.like){
+    if(!requirePro('Liking posts'))return;
+    var pid=parseInt(btn.dataset.like), p=posts.find(function(x){return x.id===pid;});
+    if(!p)return;
+    if(p._liked){p.likes--;p._liked=false;btn.classList.remove('liked');}
+    else{p.likes++;p._liked=true;btn.classList.add('liked');piFlash(btn);}
+    var lc=G('lc'+pid);if(lc)lc.textContent=p.likes;return;
+  }
+  // Dislike
+  if(btn.dataset&&btn.dataset.dis){
+    if(!requirePro('Rating'))return;
+    var pid=parseInt(btn.dataset.dis), p=posts.find(function(x){return x.id===pid;});
+    if(!p)return;
+    if(p._disliked){p.dislikes--;p._disliked=false;btn.classList.remove('disliked');}
+    else{p.dislikes++;p._disliked=true;btn.classList.add('disliked');}
+    var dc=G('dc'+pid);if(dc)dc.textContent=p.dislikes;return;
+  }
+  // Toggle comments
+  if(btn.dataset&&btn.dataset.cmt){var cm=G('cm'+btn.dataset.cmt);if(cm)cm.classList.toggle('on');return;}
+  // Post comment
+  if(btn.dataset&&btn.dataset.pc){
+    if(!requirePro('Commenting'))return;
+    var pid=parseInt(btn.dataset.pc), inp=G('ci'+pid), txt=inp?inp.value.trim():'';
+    if(!txt)return;
+    var fc2=filterText(txt);if(!fc2.ok){notify(fc2.reason);return;}
+    var p=posts.find(function(x){return x.id===pid;});if(!p)return;
+    p.cmts.push({u:me.name,t:fc2.clean});
+    var list=G('cl'+pid);
+    var cd=document.createElement('div');cd.className='cmt';
+    cd.innerHTML='<div class="av" style="width:22px;height:22px;font-size:.58rem;background:linear-gradient(135deg,#7B2FBE,#C9A84C);">'+me.ini+'</div><div class="cb"><div class="cu">'+me.name+'</div><div class="ct">'+fc2.clean+'</div></div>';
+    if(list)list.appendChild(cd);if(inp)inp.value='';return;
+  }
+  // DM
+  if(btn.dataset&&btn.dataset.dm){if(!requirePro('Messaging'))return;openChat(btn.dataset.dm,btn.dataset.di);return;}
+  // License
+  if(btn.dataset&&btn.dataset.lic){if(!requirePro('Licensing'))return;notify('Pi License coming in production!');return;}
+  // 3-dot menu
+  if(btn.dataset&&btn.dataset.mid){
+    var mid='mn'+btn.dataset.mid;
+    document.querySelectorAll('.pdrop').forEach(function(d){if(d.id!==mid)d.classList.remove('on');});
+    var dr=G(mid);if(dr)dr.classList.toggle('on');e.stopPropagation();return;
+  }
+  if(btn.dataset&&btn.dataset.del){openDelMod(parseInt(btn.dataset.del));return;}
+  if(btn.dataset&&btn.dataset.edit){notify('Edit coming soon!');return;}
+});
+document.addEventListener('click',function(){document.querySelectorAll('.pdrop').forEach(function(d){d.classList.remove('on');});});
+
+function piFlash(btn){
+  var r=btn.getBoundingClientRect();
+  var d=document.createElement('div');d.className='pifl';d.textContent='+0.01 \u03C0';
+  d.style.cssText='left:'+(r.left+r.width/2-20)+'px;top:'+(r.top-10)+'px;';
+  document.body.appendChild(d);setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},950);
+}
+
+// ── RENDER FEED ──
+function renderFeed(){
+  var f=G('feed');if(!f)return;
+  f.innerHTML='';
+  posts.forEach(function(p){f.appendChild(buildPost(p));});
+  document.querySelectorAll('.pc').forEach(attachSwipe);
+  setupScroll();
+}
+
+// ── INFINITE SCROLL ──
+function setupScroll(){
+  var f=G('feed');if(!f)return;
+  var loader=document.createElement('div');
+  loader.id='feed-loader';
+  loader.style.cssText='display:none;justify-content:center;align-items:center;padding:20px;gap:8px;flex-shrink:0;';
+  loader.innerHTML='<div style="width:8px;height:8px;border-radius:50%;background:var(--gold);animation:gpulse 1s ease-in-out infinite;"></div><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);animation:gpulse 1s ease-in-out .2s infinite;"></div><div style="width:8px;height:8px;border-radius:50%;background:var(--gold);animation:gpulse 1s ease-in-out .4s infinite;"></div>';
+  f.appendChild(loader);
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!feedLoading)loadMore();},{root:f,threshold:0.1});
+    obs.observe(loader);
+  } else {
+    f.addEventListener('scroll',function(){if(f.scrollTop+f.clientHeight>=f.scrollHeight-100&&!feedLoading)loadMore();});
+  }
+  loadMore();
+}
+
+function loadMore(){
+  feedLoading=true;
+  var loader=G('feed-loader');if(loader)loader.style.display='flex';
+  setTimeout(function(){
+    var f=G('feed');if(!f){feedLoading=false;return;}
+    for(var i=0;i<8;i++){
+      var p=genPost();
+      posts.push(p);
+      var card=buildPost(p);
+      if(loader)f.insertBefore(card,loader);else f.appendChild(card);
+      attachSwipe(card);
+    }
+    feedLoading=false;
+    if(loader)loader.style.display='none';
+  },600);
+}
+
+// ── TRENDING ──
+function renderTrending(){
+  var c=G('trendlist');if(!c)return;c.innerHTML='';
+  TRENDING.forEach(function(t){c.innerHTML+='<div class="tri"><div class="trn">'+t.n+'</div><div class="ti"><div class="tn">'+t.name+'</div><div class="ta">'+t.art+'</div></div><div class="tpi">'+t.pi+'</div></div>';});
+}
+
+// ── PROFILE ──
+var ptg=G('ptg');if(ptg)ptg.addEventListener('click',function(){setPTab('grid',this);});
+var ptl=G('ptl');if(ptl)ptl.addEventListener('click',function(){setPTab('list',this);});
+function setPTab(tab,btn){ptab=tab;document.querySelectorAll('.pftab').forEach(function(t){t.classList.remove('on');});btn.classList.add('on');renderProf();}
+
+function renderProf(){
+  var pfnm=G('pfnm');if(pfnm)pfnm.textContent=me.name;
+  var pfav=G('pfav');if(pfav)pfav.textContent=me.ini;
+  var mine=posts.filter(function(p){return p.user===me.name&&!p._gen;});
+  var pc=G('pfcnt');if(pc)pc.textContent=mine.length;
+  var grid=G('pgrid'),list=G('plist'),empty=G('pempty');
+  if(grid)grid.style.display='none';if(list)list.style.display='none';if(empty)empty.style.display='none';
+  if(!mine.length){if(empty)empty.style.display='block';return;}
+  if(ptab==='grid'){
+    if(!grid)return;grid.style.display='grid';grid.innerHTML='';
+    mine.forEach(function(p){
+      var d=document.createElement('div');d.className='gc';
+      d.innerHTML='<div class="gcb">'+(PI2[p.plat]||'SC')+'</div><div class="gov"><span>&#10084;'+p.likes+'</span><span>&#128172;'+(p.cmts?p.cmts.length:0)+'</span></div><button class="gdel">&#128465;</button>';
+      d.querySelector('.gdel').addEventListener('click',function(e){e.stopPropagation();openDelMod(p.id);});
+      d.addEventListener('click',function(){openDet(p.id);});
+      grid.appendChild(d);
+    });
+  } else {
+    if(!list)return;list.style.display='flex';list.innerHTML='';
+    mine.forEach(function(p){
+      var pc2=PM[p.plat]||['p-sc','SC'];
+      var d=document.createElement('div');d.style.cssText='background:var(--panel);border:1px solid var(--br);border-radius:7px;overflow:hidden;';
+      d.innerHTML='<div style="display:flex;align-items:center;gap:8px;padding:9px 11px;border-bottom:1px solid var(--br);"><div class="av" style="background:'+p.bg+';width:30px;height:30px;">'+p.ini+'</div><div style="flex:1;"><div style="font-weight:700;font-size:.82rem;">'+p.user+'</div><div style="font-size:.62rem;color:var(--mu);">'+p.time+'</div></div><button class="pb '+pc2[0]+'">'+pc2[1]+'</button><button style="background:none;border:none;color:var(--mu);cursor:pointer;font-size:.9rem;padding:2px 6px;" data-ldel="'+p.id+'">&#128465;</button></div>'+(p.note?'<div style="padding:7px 11px;font-size:.84rem;line-height:1.5;">'+p.note+'</div>':'')+'<div style="padding:0 11px 7px;display:flex;gap:11px;"><span style="font-size:.74rem;color:var(--mu);">&#10084; '+p.likes+'</span><span style="font-size:.74rem;color:var(--mu);">&#128172; '+(p.cmts?p.cmts.length:0)+'</span></div>';
+      var ldel=d.querySelector('[data-ldel]');if(ldel)ldel.addEventListener('click',function(){openDelMod(p.id);});
+      list.appendChild(d);
+    });
+  }
+}
+
+// ── DELETE ──
+function openDelMod(id){delId=id;show('delmod');}
+var dno=G('dno');if(dno)dno.addEventListener('click',function(){hide('delmod');delId=null;});
+var dyes=G('dyes');if(dyes)dyes.addEventListener('click',function(){
+  if(delId===null)return;
+  var idx=posts.findIndex(function(p){return p.id===delId;});
+  if(idx>-1){posts.splice(idx,1);var card=G('pc'+delId);if(card){card.style.transition='all .3s';card.style.opacity='0';card.style.transform='scale(.95)';setTimeout(function(){if(card.parentNode)card.parentNode.removeChild(card);},300);}notify('Post deleted');}
+  hide('delmod');delId=null;
+  var pv=G('pview');if(pv&&pv.classList.contains('on'))renderProf();
+});
+
+// ── POST DETAIL ──
+function openDet(id){
+  var p=posts.find(function(x){return x.id===id;});if(!p)return;
+  var pc=PM[p.plat]||['p-sc','SC'];
+  var db=G('detbody');if(!db)return;
+  db.innerHTML='<div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;"><div class="av" style="background:'+p.bg+';">'+p.ini+'</div><div><div style="font-weight:700;">'+p.user+'</div><div style="font-size:.62rem;color:var(--mu);">'+p.time+'</div></div><button class="pb '+pc[0]+'" style="margin-left:auto;border:none;cursor:pointer;" onclick="window.open(\''+p.link+'\',\'_blank\')">'+pc[1]+'</button></div>'+(p.note?'<div style="font-size:.88rem;line-height:1.5;margin-bottom:9px;padding:8px;background:rgba(255,255,255,.03);border-radius:5px;">'+p.note+'</div>':'')+buildEmbed(p)+'<div style="display:flex;gap:12px;padding:8px 0;border-top:1px solid var(--br);border-bottom:1px solid var(--br);margin:8px 0;"><span style="font-size:.78rem;font-weight:700;">&#10084; '+p.likes+'</span><span style="font-size:.78rem;font-weight:700;">&#128172; '+(p.cmts?p.cmts.length:0)+'</span></div>'+(p.cmts||[]).map(function(c){return '<div style="display:flex;gap:6px;margin-bottom:6px;"><div class="av" style="width:22px;height:22px;font-size:.58rem;">'+c.u.slice(0,2).toUpperCase()+'</div><div class="cb"><div class="cu">'+c.u+'</div><div class="ct">'+c.t+'</div></div></div>';}).join('');
+  var dd=G('ddel');if(dd)dd.dataset.detid=id;
+  show('detmod');
+}
+var ddel=G('ddel');if(ddel)ddel.addEventListener('click',function(){var id=parseInt(this.dataset.detid);hide('detmod');openDelMod(id);});
+var xd=G('xd');if(xd)xd.addEventListener('click',function(){hide('detmod');});
+
+// ── CHAT ──
+function openChat(user,ini){
+  if(user){var cn=G('chnm');if(cn)cn.textContent=user;var ca=G('chav');if(ca)ca.textContent=(ini||user.slice(0,2)).toUpperCase();}
+  show('chatmod');
+}
+var xc=G('xc');if(xc)xc.addEventListener('click',function(){hide('chatmod');});
+var bs=G('bs');if(bs)bs.addEventListener('click',sendMsg);
+var chin=G('chin');if(chin)chin.addEventListener('keydown',function(e){if(e.key==='Enter')sendMsg();});
+var bf=G('bf');if(bf)bf.addEventListener('click',function(){if(!requirePro('File transfer'))return;var fu=G('fup');if(fu)fu.click();});
+var fup=G('fup');if(fup)fup.addEventListener('change',function(){
+  var f=this.files[0];if(!f)return;
+  if(f.size>64*1024*1024){notify('File exceeds 64 MB!');return;}
+  var url=URL.createObjectURL(f);
+  var sizeMB=(f.size/1024/1024).toFixed(1);
+  var isAudio=f.type.startsWith('audio/');
+  var fileHTML='<div style="background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);border-radius:6px;padding:8px;max-width:260px;">'
+    +'<div style="font-size:.75rem;font-weight:700;color:var(--gold);margin-bottom:4px;">&#128190; '+f.name+'</div>'
+    +'<div style="font-size:.65rem;color:var(--mu);margin-bottom:6px;">'+sizeMB+' MB</div>'
+    +(isAudio?'<audio controls style="width:100%;margin-bottom:6px;"><source src="'+url+'" type="'+f.type+'"></audio>':'')
+    +'<a href="'+url+'" download="'+f.name+'" style="display:block;background:var(--gold);color:var(--bk);text-align:center;padding:5px;border-radius:4px;font-family:Bebas Neue,sans-serif;font-size:.8rem;letter-spacing:1px;text-decoration:none;">&#11015; DOWNLOAD</a>'
+    +'</div>';
+  addBubble(null,fileHTML,'out');
+  notify('File ready — tap Download to save!');this.value='';
+});
+var rb=G('rb');
+var mediaRec=null, audioChunks=[], recStream=null;
+if(rb)rb.addEventListener('click',function(){
+  if(!requirePro('Voice recording'))return;
+  if(!isRec){
+    // START recording
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){
+      recStream=stream;
+      mediaRec=new MediaRecorder(stream);
+      audioChunks=[];
+      mediaRec.ondataavailable=function(e){if(e.data.size>0)audioChunks.push(e.data);};
+      mediaRec.onstop=function(){
+        var blob=new Blob(audioChunks,{type:'audio/webm'});
+        var url=URL.createObjectURL(blob);
+        // Add playable audio bubble
+        var audio='<audio controls style="width:100%;max-width:260px;margin:4px 0;"><source src="'+url+'" type="audio/webm">Your browser does not support audio.</audio>';
+        addBubble(null,audio,'out');
+        notify('Voice message sent!');
+        // Stop all tracks
+        recStream.getTracks().forEach(function(t){t.stop();});
+      };
+      mediaRec.start();
+      isRec=true;
+      rb.classList.add('on');
+      rb.textContent='⏹ Stop';
+      notify('Recording... tap Stop when done');
+    }).catch(function(e){
+      notify('Microphone access denied!');
+    });
+  } else {
+    // STOP recording
+    if(mediaRec&&mediaRec.state!=='inactive')mediaRec.stop();
+    isRec=false;
+    rb.classList.remove('on');
+    rb.innerHTML='&#127895; Rec';
+  }
+});
+
+function sendMsg(){
+  if(!requirePro('Messaging'))return;
+  var inp=G('chin');var txt=inp?inp.value.trim():'';if(!txt)return;
+  addBubble(txt,null,'out');if(inp)inp.value='';
+  
+}
+function addBubble(txt,file,dir){
+  var msgs=G('cmsgs');if(!msgs)return;
+  var now=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
+  var d=document.createElement('div');d.className='bbl '+dir;
+  d.innerHTML=(file?'<div class="bfile">'+file+'</div>':'')+(txt||'')+'<div class="btm'+(dir==='out'?' r':'')+'" >'+now+'</div>';
+  msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;
+}
+
+// ── MEMBERS ──
+var xm=G('xm');if(xm)xm.addEventListener('click',function(){hide('membmod');});
+var msb=G('msb');if(msb)msb.addEventListener('click',renderMembers);
+var msq=G('msq');if(msq)msq.addEventListener('input',renderMembers);
+var bam=G('bam');if(bam)bam.addEventListener('click',addMember);
+var mcatsEl=G('mcats');if(mcatsEl)mcatsEl.addEventListener('click',function(e){
+  var btn=e.target.closest('.mcat');if(!btn)return;
+  mcat=btn.dataset.cat;
+  document.querySelectorAll('.mcat').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');
+  renderMembers();
+});
+
+function openMembers(){show('membmod');renderMembers();}
+function renderMembers(){
+  var q=(G('msq')||{}).value||'';q=q.toLowerCase();
+  var list=members.filter(function(m){
+    var mc=mcat==='all'||m.role===mcat||(mcat==='following'&&followed.has(m.id));
+    var mq=!q||m.name.toLowerCase().includes(q)||m.genre.toLowerCase().includes(q)||m.bio.toLowerCase().includes(q);
+    return mc&&mq;
+  });
+  var cnt=G('mcnt');if(cnt)cnt.textContent=list.length+' pioneer'+(list.length!==1?'s':'');
+  var c=G('mlist');if(!c)return;c.innerHTML='';
+  if(!list.length){c.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--mu);font-size:.76rem;">No Pioneers found</div>';return;}
+  list.forEach(function(m){
+    var r=ROLE[m.role],ini=m.name.slice(0,2).toUpperCase(),isF=followed.has(m.id);
+    var d=document.createElement('div');d.className='mcard';
+    d.innerHTML='<div class="mav" style="background:'+r.av+';">'+ini+'</div><div class="min2"><div class="mnm">'+m.name+'</div><div class="mrl">'+m.genre+'</div><div class="mbi">'+m.bio+'</div><div style="font-size:.58rem;color:var(--mu);margin-top:2px;">'+m.plats+'</div><div class="macts"><button class="mbtn mbf'+(isF?' on':'')+'" data-fid="'+m.id+'">'+(isF?'Following':'+ Follow')+'</button><button class="mbtn mbm" data-dmu="'+m.name+'" data-dmi="'+ini+'">DM</button></div></div><span class="mbdg" style="background:'+r.bg+';color:'+r.col+';border:1px solid '+r.bd+';">'+r.lbl+'</span>';
+    d.querySelector('[data-fid]').addEventListener('click',function(){var id=parseInt(this.dataset.fid);if(followed.has(id)){followed.delete(id);this.textContent='+ Follow';this.classList.remove('on');notify('Unfollowed');}else{followed.add(id);this.textContent='Following';this.classList.add('on');notify('Following!');}});
+    d.querySelector('[data-dmu]').addEventListener('click',function(){hide('membmod');openChat(this.dataset.dmu,this.dataset.dmi);});
+    c.appendChild(d);
+  });
+}
+function addMember(){
+  var name=(G('an')||{}).value||'';name=name.trim();if(!name){notify('Username required!');return;}
+  members.unshift({id:Date.now(),name:name,role:(G('ar')||{}).value||'producer',genre:(G('agn')||{}).value||'Music',plats:(G('ap')||{}).value||'—',bio:(G('ab')||{}).value||'Pioneer on Beatz4Pi'});
+  ['an','ap','agn','ab'].forEach(function(id){var e=G(id);if(e)e.value='';});
+  renderMembers();notify('Pioneer added!');
+}
+
+// ── TERMS ──
+var xt=G('xt');if(xt)xt.addEventListener('click',function(){hide('termsmod');});
+var ttabs=G('ttabs');if(ttabs)ttabs.addEventListener('click',function(e){var btn=e.target.closest('.ttab');if(!btn)return;openTerms(btn.dataset.sec);});
+function openTerms(sec){
+  var t=TERMS_CONTENT[sec];if(!t)return;
+  var tt=G('ttitle');if(tt)tt.textContent=t.title;
+  var src=G(t.src);var tb=G('tbody');
+  if(tb&&src)tb.innerHTML=src.innerHTML;
+  document.querySelectorAll('.ttab').forEach(function(b){b.classList.toggle('on',b.dataset.sec===sec);});
+  show('termsmod');
+}
+
+// ── SUBSCRIPTION ──
+var PRO_PIONEERS=[
+  {ini:'BK',name:'BeatKing_Pi',bg:'linear-gradient(135deg,#7B2FBE,#C9A84C)',role:'Producer',since:'May 2025',tracks:47},
+  {ini:'MX',name:'MixMaster_Pi',bg:'linear-gradient(135deg,#E1306C,#833AB4)',role:'DJ',since:'Jun 2025',tracks:32},
+  {ini:'GW',name:'GoldWax_Records',bg:'linear-gradient(135deg,#C9A84C,#5a3e00)',role:'Label',since:'Apr 2025',tracks:91},
+  {ini:'SK',name:'SoulKey_Pi',bg:'linear-gradient(135deg,#F39C12,#8B4513)',role:'Musician',since:'Jul 2025',tracks:28},
+  {ini:'FL',name:'FreqLab_Pi',bg:'linear-gradient(135deg,#2980B9,#0a2a4f)',role:'Producer',since:'Mar 2025',tracks:63},
+  {ini:'LL',name:'LoFi_Luna',bg:'linear-gradient(135deg,#4A90D9,#1a3a6a)',role:'Musician',since:'May 2025',tracks:39},
+];
+
+function openSub(){renderProList();show('submod');}
+var xsub=G('xsub');if(xsub)xsub.addEventListener('click',function(){hide('submod');});
+
+function renderProList(){
+  var c=G('pro-list');if(!c)return;c.innerHTML='';
+  PRO_PIONEERS.forEach(function(p){
+    var d=document.createElement('div');
+    d.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.12);border-radius:6px;';
+    d.innerHTML='<div class="av" style="background:'+p.bg+';width:34px;height:34px;">'+p.ini+'</div><div style="flex:1;min-width:0;"><div style="font-size:.84rem;font-weight:700;">'+p.name+' <span class="pro-badge">PRO</span></div><div style="font-size:.65rem;color:var(--mu);font-family:Space Mono,monospace;">'+p.role+' &bull; Since '+p.since+'</div></div><div style="text-align:right;flex-shrink:0;"><div style="font-family:Bebas Neue,sans-serif;font-size:.95rem;color:var(--gold);">'+p.tracks+'</div><div style="font-size:.57rem;color:var(--mu);font-family:Space Mono,monospace;">tracks</div></div>';
+    c.appendChild(d);
+  });
+}
+
+var subBtn=G('sub-btn');
+if(subBtn)subBtn.addEventListener('click',function(){
+  var btn=this,st=G('sub-status');
+  btn.disabled=true;btn.style.opacity='.7';
+  if(st)st.textContent='Connecting to Pi Network...';
+  var payData={amount:1,memo:'Beatz4Pi Pioneer Pro - 1 month ('+PI_ENV.label+')',metadata:{type:'subscription',plan:'pro',user:me.name,network:PI_ENV.label}};
+  var cbs={
+    onReadyForServerApproval:function(pid){
+      if(st)st.textContent='Approving...';
+      fetch('/.netlify/functions/payment/approve',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({paymentId:pid})
+      }).then(function(){
+        console.log('Payment approved:', pid);
+      }).catch(function(e){
+        console.error('Approve error:',e);
+      });
+    },
+    onReadyForServerCompletion:function(pid,txid){
+      if(st)st.textContent='Completing...';
+      fetch('/.netlify/functions/payment/complete',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({paymentId:pid,txid:txid})
+      }).then(function(){
+        console.log('Payment complete:', pid);
+        activatePro();
+      }).catch(function(e){
+        console.error('Complete error:',e);
+        activatePro();
+      });
+    },
+    onCancel:function(){if(st)st.textContent='Cancelled.';btn.disabled=false;btn.style.opacity='1';setTimeout(function(){if(st)st.textContent='';},3000);},
+    onError:function(){if(!PI_ENV.inPiBrowser){if(st)st.textContent='Simulating...';setTimeout(activatePro,800);}else{if(st)st.textContent='Payment failed. Try again.';btn.disabled=false;btn.style.opacity='1';}}
+  };
+  try{
+    if(window.Pi&&typeof Pi.createPayment==='function'){
+      // Timeout - re-enable button if wallet doesn't open
+      var payTimeout=setTimeout(function(){
+        if(st)st.textContent='Try again in Pi Browser';
+        btn.disabled=false;btn.style.opacity='1';
+      },8000);
+      Pi.createPayment(payData,{
+        onReadyForServerApproval:function(pid){
+          clearTimeout(payTimeout);
+          if(st)st.textContent='Approving...';
+          fetch('/.netlify/functions/payment/approve',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({paymentId:pid})
+          }).catch(function(e){console.error('Approve:',e);});
+        },
+        onReadyForServerCompletion:function(pid,txid){
+          if(st)st.textContent='Completing...';
+          fetch('/.netlify/functions/payment/complete',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({paymentId:pid,txid:txid})
+          }).then(function(){activatePro();}).catch(function(){activatePro();});
+        },
+        onCancel:function(pid){
+          clearTimeout(payTimeout);
+          if(st)st.textContent='Cancelled';
+          btn.disabled=false;btn.style.opacity='1';
+        },
+        onError:function(err,pay){
+          clearTimeout(payTimeout);
+          console.error('Pi payment error:',err);
+          if(st)st.textContent='Error: '+err;
+          btn.disabled=false;btn.style.opacity='1';
+        }
+      });
+    } else {
+      if(st)st.textContent='Open in Pi Browser to pay!';
+      btn.disabled=false;btn.style.opacity='1';
+    }
+  }catch(e){
+    console.error('Payment error:',e);
+    if(st)st.textContent='Error. Try again.';
+    btn.disabled=false;btn.style.opacity='1';
+  }
+});
+
+function activatePro(){
+  isPro=true;
+  var btn=G('sub-btn'),st=G('sub-status');
+  if(btn){btn.textContent='SUBSCRIBED — PIONEER PRO';btn.style.background='linear-gradient(135deg,#2ECC71,#1a7a44)';btn.disabled=true;}
+  if(st)st.textContent='Active! Enjoy Pro features.';
+  PRO_PIONEERS.unshift({ini:me.ini,name:me.name,bg:me.color,role:'Pioneer',since:'Just now',tracks:0});
+  PRO_NAMES.push(me.name);
+  renderProList();
+  var fb=G('fbanner');if(fb)fb.style.display='none';
+  notify('Welcome to Pioneer Pro!');
+  setTimeout(function(){hide('submod');},2000);
+}
+
+// ── MODAL BG CLICK ──
+['chatmod','membmod','termsmod','delmod','detmod','submod'].forEach(function(id){
+  var el=G(id);if(el)el.addEventListener('click',function(e){if(e.target===this)hide(id);});
+});
+
+// ── SWIPE TO DELETE ──
+function attachSwipe(card){
+  if(card._sw)return;card._sw=true;
+  var sx=0,sy=0,moved=false;
+  card.addEventListener('touchstart',function(e){sx=e.touches[0].clientX;sy=e.touches[0].clientY;moved=false;},{passive:true});
+  card.addEventListener('touchmove',function(e){
+    var dx=e.touches[0].clientX-sx,dy=e.touches[0].clientY-sy;
+    if(!moved&&Math.abs(dy)>Math.abs(dx))return;if(dx>=0)return;moved=true;
+    var cl=Math.max(dx,-76);card.style.transform='translateX('+cl+'px)';card.style.transition='none';
+    var h=card.querySelector('.swh');
+    if(!h){h=document.createElement('div');h.className='swh';h.innerHTML='&#128465;';h.style.cssText='position:absolute;right:0;top:0;bottom:0;width:66px;background:var(--rd);display:flex;align-items:center;justify-content:center;font-size:1.3rem;pointer-events:none;';card.style.overflow='hidden';card.appendChild(h);}
+    h.style.opacity=Math.min(1,Math.abs(dx)/56)+'';
+  },{passive:true});
+  card.addEventListener('touchend',function(e){
+    var dx=e.changedTouches[0].clientX-sx;
+    card.style.transition='transform .25s ease';card.style.transform='';
+    var h=card.querySelector('.swh');if(h)h.style.opacity='0';
+    if(moved&&dx<-60){var pid=parseInt(card.id.replace('pc',''));if(!isNaN(pid))openDelMod(pid);}
+    moved=false;
+  },{passive:true});
+}
+
+
+// ── SEARCH ──
+var currentGenre = 'all';
+var currentFilter = 'all';
+
+function doSearch(){
+  var q = (G('search-input')||{}).value||'';
+  q = q.trim().toLowerCase();
+  var results = G('search-results');
+  var list = G('search-list');
+  var clr = G('search-clear');
+  if(!q){ if(results)results.style.display='none'; if(clr)clr.style.display='none'; return; }
+  if(clr)clr.style.display='block';
+  
+  // Search posts (songs/beats)
+  var postMatches = posts.filter(function(p){
+    return (p.title&&p.title.toLowerCase().includes(q)) ||
+           (p.note&&p.note.toLowerCase().includes(q)) ||
+           (p.user&&p.user.toLowerCase().includes(q)) ||
+           (p.genre&&p.genre.toLowerCase().includes(q));
+  }).slice(0,8);
+  
+  // Search members (pioneers)
+  var memMatches = members.filter(function(m){
+    return m.name.toLowerCase().includes(q) ||
+           m.genre.toLowerCase().includes(q) ||
+           m.bio.toLowerCase().includes(q) ||
+           m.name.toLowerCase()===q;
+  }).slice(0,5);
+
+  if(!list) return;
+  list.innerHTML = '';
+
+  if(postMatches.length){
+    list.innerHTML += '<div style="padding:6px 10px;font-size:.65rem;color:var(--gold);font-family:Space Mono,monospace;background:rgba(201,168,76,.06);border-bottom:1px solid var(--br);">SONGS & BEATS</div>';
+    postMatches.forEach(function(p){
+      var d = document.createElement('div');
+      d.style.cssText = 'padding:8px 11px;border-bottom:1px solid var(--br);cursor:pointer;display:flex;align-items:center;gap:8px;';
+      d.innerHTML = '<div class="av" style="background:'+p.bg+';width:28px;height:28px;font-size:.64rem;flex-shrink:0;">'+p.ini+'</div><div style="flex:1;min-width:0;"><div style="font-size:.82rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+(p.title||p.note||'Untitled')+'</div><div style="font-size:.64rem;color:var(--mu);font-family:Space Mono,monospace;">'+p.user+(p.genre?' &bull; '+p.genre:'')+'</div></div><span style="font-size:.64rem;color:var(--mu);">&#10084; '+p.likes+'</span>';
+      d.addEventListener('click', function(){
+        clearSearch();
+        // Scroll to the post
+        var card = G('pc'+p.id);
+        if(card){card.scrollIntoView({behavior:'smooth'});card.style.borderColor='var(--gold)';setTimeout(function(){card.style.borderColor='';},2000);}
+      });
+      list.appendChild(d);
+    });
+  }
+
+  if(memMatches.length){
+    list.innerHTML += '<div style="padding:6px 10px;font-size:.65rem;color:var(--gold);font-family:Space Mono,monospace;background:rgba(201,168,76,.06);border-bottom:1px solid var(--br);">PIONEERS</div>';
+    memMatches.forEach(function(m){
+      var r = ROLE[m.role]||{av:'linear-gradient(135deg,#7B2FBE,#C9A84C)',lbl:'Pioneer'};
+      var d = document.createElement('div');
+      d.style.cssText = 'padding:8px 11px;border-bottom:1px solid var(--br);cursor:pointer;display:flex;align-items:center;gap:8px;';
+      d.innerHTML = '<div class="av" style="background:'+r.av+';width:28px;height:28px;font-size:.64rem;flex-shrink:0;">'+m.name.slice(0,2).toUpperCase()+'</div><div style="flex:1;min-width:0;"><div style="font-size:.82rem;font-weight:700;">'+m.name+'</div><div style="font-size:.64rem;color:var(--mu);font-family:Space Mono,monospace;">'+r.lbl+' &bull; '+m.genre+'</div></div>';
+      d.addEventListener('click', function(){
+        clearSearch();
+        openMembers();
+        setTimeout(function(){var msq=G('msq');if(msq){msq.value=m.name;renderMembers();}},300);
+      });
+      list.appendChild(d);
+    });
+  }
+
+  if(!postMatches.length && !memMatches.length){
+    list.innerHTML = '<div style="padding:14px;text-align:center;font-size:.78rem;color:var(--mu);">No results for "'+q+'"</div>';
+  }
+
+  if(results)results.style.display='block';
+}
+
+function clearSearch(){
+  var inp=G('search-input'); if(inp)inp.value='';
+  var res=G('search-results'); if(res)res.style.display='none';
+  var clr=G('search-clear'); if(clr)clr.style.display='none';
+}
+
+var sbi=G('search-btn'); if(sbi)sbi.addEventListener('click',function(e){e.stopPropagation();doSearch();});
+var scl=G('search-clear'); if(scl)scl.addEventListener('click',function(e){e.stopPropagation();clearSearch();});
+var sinp=G('search-input');
+if(sinp){
+  sinp.addEventListener('focus',function(){this.style.borderColor='var(--gold)';});
+  sinp.addEventListener('blur',function(){this.style.borderColor='var(--br)';});
+  sinp.addEventListener('input',function(){if(this.value.length>=1)doSearch();else clearSearch();});
+  sinp.addEventListener('keydown',function(e){if(e.key==='Enter'){e.stopPropagation();doSearch();}});
+  sinp.addEventListener('click',function(e){e.stopPropagation();});
+}
+var sbar=G('searchbar');
+if(sbar)sbar.addEventListener('click',function(e){e.stopPropagation();});
+// Close search on outside click
+document.addEventListener('click',function(e){
+  var sb=G('searchbar');
+  if(sb&&!sb.contains(e.target))clearSearch();
+});
+
+// ── GENRE FILTER ──
+document.querySelectorAll('[data-genre]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    currentGenre = this.dataset.genre;
+    document.querySelectorAll('[data-genre]').forEach(function(b){b.classList.remove('on');});
+    this.classList.add('on');
+    filterFeed();
+  });
+});
+
+document.querySelectorAll('[data-filter]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    currentFilter = this.dataset.filter;
+    document.querySelectorAll('[data-filter]').forEach(function(b){b.classList.remove('on');});
+    this.classList.add('on');
+    filterFeed();
+  });
+});
+
+function filterFeed(){
+  var cards = document.querySelectorAll('.pc');
+  cards.forEach(function(card){
+    var pid = parseInt(card.id.replace('pc',''));
+    var p = posts.find(function(x){return x.id===pid;});
+    if(!p){card.style.display='block';return;}
+    var genreOk = currentGenre==='all' || (p.genre&&p.genre===currentGenre);
+    var filterOk = currentFilter==='all'; // extend later for beats/vocals etc
+    card.style.display = (genreOk&&filterOk) ? 'block' : 'none';
+  });
+}
+
+
+// ── PI SDK ──
+(function(){var s=document.createElement('script');s.src='https://sdk.minepi.com/pi-sdk.js';s.async=true;s.defer=true;document.head.appendChild(s);})();
+
+// ── BOOT ──
+// ── PI SERVICE ──
+var piAuthResult = null;
+
+async function piConnect(){
+  if(!window.Pi) return null;
+  try{
+    await Pi.init({version:'2.0', sandbox:PI_ENV.sandbox});
+    const auth = await Pi.authenticate(['username'], function(p){console.log('incomplete payment',p);});
+    piAuthResult = auth;
+    return auth;
+  }catch(e){
+    console.log('Pi auth error:', e);
+    return null;
+  }
+}
+
+window.addEventListener('load', async function(){
+  initLogin();
+  G('login').style.display='flex';
+  
+  // Immediately call Pi.authenticate on load (required by App Studio)
+  if(window.Pi){
+    var auth = await piConnect();
+    if(auth && auth.user && auth.user.username){
+      me.name = auth.user.username;
+      me.ini = me.name.slice(0,2).toUpperCase();
+      // If terms already accepted, boot directly
+      try{
+        if(localStorage.getItem('b4p_v2')==='1'){
+          bootApp();
+          return;
+        }
+      }catch(e){}
+    }
+  }
+});
+
+</script>
+</body>
+</html>
