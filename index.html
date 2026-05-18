@@ -1178,7 +1178,7 @@ function setupScroll(){
     var obs=new IntersectionObserver(function(entries){if(entries[0].isIntersecting&&!feedLoading)loadMore();},{root:f,threshold:0.1});
     obs.observe(loader);
   } else {
-    f.addEventListener('scroll',function(){if(f.scrollTop+f.clientHeight>=f.scrollHeight-100&&!feedLoading)loadMore();});
+    if(!f._scroll){f._scroll=true;f.addEventListener('scroll',function(){if(f.scrollTop+f.clientHeight>=f.scrollHeight-100&&!feedLoading)loadMore();});}
   }
   loadMore();
 }
