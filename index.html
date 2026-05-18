@@ -84,8 +84,7 @@ nav::-webkit-scrollbar{display:none;}
 
 /* FEED */
 .feed{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding:10px;}
-.feed::-webkit-scrollbar{width:4px;}.feed::-webkit-scrollbar-thumb{background:var(--br);}
-
+.feed{...-webkit-overflow-scrolling:touch;flex-direction:column;padding:10px;}
 /* POST CARD */
 .pc{background:var(--panel);border:1px solid var(--br);border-radius:8px;overflow:hidden;position:relative;width:100%;max-width:680px;margin:0 auto 10px;display:block;transform:none;}
 .pc:hover{border-color:rgba(201,168,76,.4);}
