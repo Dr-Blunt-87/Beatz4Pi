@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js">window.initFirebase=function(){
+  if(window.db)return;
+  if(typeof firebase==='undefined'){setTimeout(window.initFirebase,300);return;}
+  try{firebase.initializeApp({apiKey:'AIzaSyBdCU7nbHRgz2lsleB_GgzQ3l3cJbBbUdg',authDomain:'beatz4pi-e02aa.firebaseapp.com',projectId:'beatz4pi-e02aa',storageBucket:'beatz4pi-e02aa.firebasestorage.app',messagingSenderId:'906661426656',appId:'1:906661426656:web:9c0bf8b9c7f1a0864de785'});}catch(e){}
+  window.db=firebase.firestore();
+  if(!me.name||me.name.startsWith('Pioneer_'))return;
+  window.db.collection('pioneers').doc(me.name).set({name:me.name,nameLower:me.name.toLowerCase(),role:'musician',genre:'Music',bio:'Pioneer on Beatz4Pi',lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});
+  window.db.collection('pioneers').get().then(function(snap){
+    snap.forEach(function(doc){var p=doc.data();if(!p.name)return;var ex=members.findIndex(function(m){return m.name.toLowerCase()===p.name.toLowerCase();});var rm={id:p.name,name:p.name,role:p.role||'musician',genre:p.genre||'Music',plats:'—',bio:p.bio||'Pioneer on Beatz4Pi',_real:true};if(ex>-1)members[ex]=rm;else members.push(rm);});
+    var t0=Date.now();
+    snap.forEach(function(doc){
+      var other=doc.id;if(other===me.name)return;
+      var cid=[me.name,other].sort().join('_');
+      window.db.collection('chats').doc(cid).collection('messages').orderBy('timestamp','desc').limit(1).onSnapshot(function(ms){ms.docChanges().forEach(function(ch){if(ch.type!=='added')return;var m=ch.doc.data();if(!m.text||m.from===me.name)return;var mt=m.timestamp&&m.timestamp.toMillis?m.timestamp.toMillis():0;if(mt<t0||currentChatUser===other)return;unreadFrom[other]=true;updateUnreadBadges();notify('New message from '+other+'!');});});
+    });
+  });
+};
+setTimeout(window.initFirebase,1500);</script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script><head>
 <meta charset="UTF-8">
 <meta name="pi-domain-verification" content="30b79d3bb6f0ce2250e8519e600b696e489c9921ec357cd551e4a28be5d87ea9bd7b54c3f9ee29d39d07bec40527fe47d75ea09494f46f9e8ff5239af38e7f39">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
